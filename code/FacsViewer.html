@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Testing FacsViewer</title>
+        <link rel="stylesheet" type="text/css" href="css/FacsViewer.css"/>
+        <script src="js/FacsViewer.js"></script>
+        <script>
+            
+            "use strict";
+            
+            var facsViewer = null;
+            
+            function testFacsViewer(){
+                console.log('Testing FacsViewer class.');
+                facsViewer = new FacsViewer({folder: 'https://hcmc.uvic.ca/~vicpoems/page_images/'});
+            }
+            
+            window.addEventListener('load', testFacsViewer);
+        </script>
+        
+    </head>
+    <body>
+        <h1>Test of the FacsViewer class</h1>
+        
+        
+    </body>
+</html>

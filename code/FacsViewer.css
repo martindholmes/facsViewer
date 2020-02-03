@@ -1,0 +1,144 @@
+/* This is the CSS for the FacsViewer JavaScript object. */
+
+/* The container div is flex. */
+div#facsViewer{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+div#infoDisplay{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Folder link list. */
+ul.folderLinks{
+  list-style-type: none;
+}
+
+ul.folderLinks a, div#infoDisplay a, div#infoDisplay span{
+  text-decoration: none;
+  font-size: 2rem;
+  color: #a60000;
+  background-color: #e0e0e0;
+  padding: 0.25em;
+  margin: 0.1em;
+  line-height: 2;
+}
+
+/* The containing div is also flex. */
+div.facsViewerThumb{
+  width: 5em;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  border: solid 1pt gray;
+  box-shadow: 0.2em 0.2em 0.1em gray;
+  margin: 0.25em;
+  padding-top: 0;
+  background-color: #ffffffee;
+}
+
+div.facsViewerThumb>div{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+div.facsViewerThumb>div>div{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Close X is in the top right. */
+div.facsViewerThumb div.closer{
+  display: none;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: lightgray;
+  color: black;
+  border: solid 1pt gray;
+  width: 100%;
+  height: 4vh;
+  padding: 0.25em;
+}
+
+a.arrow{
+  display: none;
+  text-decoration: none;
+  color: gray;
+  font-size: 5rem;
+  cursor: pointer;
+}
+
+div.closer a{
+  text-decoration: none;
+  color: black;
+  padding-right: 0.5em;
+}
+
+/* Let the image take up most of the box. */
+div.facsViewerThumb img{
+  width: 5em;
+  margin-top: 0.25em;
+}
+
+/* Now to show things... */
+div.facsViewerThumb:target{
+  height: 96vh;
+  width: 96vw;
+  position: absolute;
+  top: 2vh;
+  left: 2vw;
+  z-index: 1000;
+}
+
+div.facsViewerThumb > div > div{
+  background-color: #ffffff;
+}
+
+div.facsViewerThumb:target > div > div{
+  padding: 0.5rem;
+}
+
+div.facsViewerThumb:target div.controls{
+  z-index: 2000;
+}
+
+div.facsViewerThumb:target div.closer{
+  display: flex;
+}
+
+div.facsViewerThumb div.imgContainer{
+  overflow: auto;
+  transition-property: transform;
+  transition-duration: 0.2s;
+  width: 100%;
+  flex-grow: 3;
+}
+
+div.facsViewerThumb:target img{
+  width: auto;
+  max-width: 90vw;
+  max-height: 90vh;
+  border: dotted 1pt #a60000;
+  cursor: default;
+  transition-property: transform;
+  transition-duration: 0.2s;
+}
+
+div.facsViewerThumb:target a.arrow{
+  display: block;
+}
