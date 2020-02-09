@@ -48,7 +48,9 @@ class FacsViewer{
       //Simpler match for folder paths. We only want subfolders.
       this.ptnFolderPath = /^[^\/]+\/$/;
 
-      //Array for images to display.
+      //Array for images to display. Each array item is actually an
+      //object with img and link properties, so that if required, each
+      //image can have a link to an exernal location.
       this.images = [];
 
       //Array for links to subfolders to display.
@@ -90,6 +92,13 @@ class FacsViewer{
         //Make sure there's a final slash.
         this.setFolder(tmpFolder);
       }
+
+      //Optional additional parameter for a function that can transform the
+      //main folder path into a path to a thumbnail instead. If this is
+      //supplied, then the object will create a <picture> element with
+      //multiple sources, allowing rapid loading of thumbnails.
+      let funcFolderToThumbnail = options.funcFolderToThumbnail || null;
+
     }
     catch(e){
       console.log('ERROR: ' + e.message);
@@ -129,15 +138,18 @@ class FacsViewer{
       this.folder = '';
       this.images = [];
       this.subfolders = [];
+      //Should we attempt to store the funcFolderTothumbnail function in the
+      //JSON? I don't think so. Make the user set it externally.
+      //this.funcFolderToThumbnail = null;
       //Make sure there's a final slash.
       if (obj.folder){
         this.folder = obj.folder.replace(/\/$/, '') + '/';
       }
       if (obj.images){
+        //TODO: Update this to deal with image + link.
         for (let img of obj.images){
           this.images.push((this.folder != '')? this.folder + img: img);
         }
-
       }
       if (obj.subfolders){
         this.subfolders = obj.subfolders;
@@ -199,7 +211,7 @@ class FacsViewer{
       for (let i=0; i<links.length; i++){
         let href = links[i].getAttribute('href');
         if (href.match(this.ptnImagePath)){
-          this.images.push(this.folder + href);
+          this.images.push({img: this.folder + href});
         }
         else{
           if (href.match(this.ptnFolderPath)){
@@ -280,9 +292,9 @@ class FacsViewer{
     minus.appendChild(document.createTextNode('-'));
     body.appendChild(minus);
     for (let i=0; i<this.images.length; i++){
-      let fName = this.images[i].split('/').pop();
-      let lastName = (i > 0)? this.images[i-1].split('/').pop() : this.images[this.images.length-1].split('/').pop();
-      let nextName = (i < this.images.length - 1)? this.images[i+1].split('/').pop() : this.images[0].split('/').pop();
+      let fName = this.images[i].img.split('/').pop();
+      let lastName = (i > 0)? this.images[i-1].img.split('/').pop() : this.images[this.images.length-1].img.split('/').pop();
+      let nextName = (i < this.images.length - 1)? this.images[i+1].img.split('/').pop() : this.images[0].img.split('/').pop();
       let id = fName.replace(/[\s'",\?\!@#$%\[\]\{\};:]+/g, '_');
       let div = document.createElement('div');
       div.setAttribute('id', id);
@@ -303,17 +315,38 @@ class FacsViewer{
 
       let a = document.createElement('a');
       a.setAttribute('href', '#' + id);
-      let img = document.createElement('img');
-      img.setAttribute('src', this.images[i]);
-      img.setAttribute('crossorigin', 'anonymous');
-      img.setAttribute('title', fName);
-      a.appendChild(img);
+      if (this.funcFolderToThumbnail == null){
+        let img = document.createElement('img');
+        img.setAttribute('src', this.images[i].img);
+        img.setAttribute('crossorigin', 'anonymous');
+        img.setAttribute('title', fName);
+        a.appendChild(img);
+      }
+      else{
+        let thumb = this.funcFolderToThumbnail(this.images[i].img);
+        console.log('Using thumbnail ' + thumb);
+        let pic = document.createElement('picture');
+        let src1 = document.createElement('source');
+        src1.setAttribute('media', '(max-width: 6em)');
+        src1.setAttribute('srcset', thumb);
+        pic.appendChild(src1);
+        let src2 = document.createElement('source');
+        src2.setAttribute('media', '(min-width: 6.1em)');
+        src2.setAttribute('srcset', this.images[i].img);
+        pic.appendChild(src2);
+        let img = document.createElement('img');
+        img.setAttribute('src', this.images[i].img);
+        img.setAttribute('crossorigin', 'anonymous');
+        img.setAttribute('title', fName);
+        pic.appendChild(img);
+        a.appendChild(pic);
+      }
       divImg.appendChild(a);
       div2.appendChild(divImg);
       let divCtrls = document.createElement('div');
       divCtrls.setAttribute('class', 'controls');
       let ju = jumper.cloneNode(true);
-      ju.addEventListener('click', function(){window.open(this.images[i])}.bind(this));
+      ju.addEventListener('click', function(){window.open(this.images[i].img)}.bind(this));
       divCtrls.appendChild(ju);
       let ro = rotator.cloneNode(true);
       ro.addEventListener('click', function(){this.rotateImage('facsImg_' + i);}.bind(this));
@@ -419,6 +452,7 @@ class FacsViewer{
       if (img.getBoundingClientRect().y < 100){
         img.style.marginTop = '';
       }*/
+      let topMargin = 0;
       while(img.getBoundingClientRect().y > 100){
         topMargin = topMargin - 10;
         img.style.marginTop = topMargin + 'px';
