@@ -85,7 +85,7 @@ a.arrow, a.arrow:hover{
   cursor: pointer;
 }
 
-div.closer a:not(.arrow), div.closer a:not(.arrow):hover{
+div.closer a:not(.arrow), div.closer a:not(.arrow):hover, div.closer a:not(.arrow):visited{
   text-decoration: none;
   color: black;
   padding-right: 0.5em;
