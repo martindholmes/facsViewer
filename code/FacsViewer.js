@@ -152,6 +152,9 @@ class FacsViewer{
         //TODO: Update this to deal with image + link.
         for (let image of obj.images){
           this.images.push({img: (this.folder != '')? this.folder + image.img:image.img});
+          if (image.hasOwnProperty('link')){
+            this.images[this.images.length-1].link = image.link;
+          }
         }
       }
       if (obj.subfolders){
@@ -304,7 +307,7 @@ class FacsViewer{
       div.setAttribute('class', 'facsViewerThumb');
       let c = closer.cloneNode(true);
       c.getElementsByTagName('span')[0].innerHTML = fName;
-      if (this.images[i].link){
+      if (this.images[i].hasOwnProperty('link')){
         let imgLink = document.createElement('a');
         imgLink.setAttribute('href', this.images[i].link);
         imgLink.appendChild(document.createTextNode(this.linkText));
