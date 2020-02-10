@@ -73,9 +73,11 @@ div.facsViewerThumb div.closer{
   width: 100%;
   height: 4vh;
   padding: 0.25em;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-a.arrow{
+a.arrow, a.arrow:hover{
   display: none;
   text-decoration: none;
   color: gray;
@@ -83,7 +85,7 @@ a.arrow{
   cursor: pointer;
 }
 
-div.closer a{
+div.closer a:not(.arrow), div.closer a:not(.arrow):hover{
   text-decoration: none;
   color: black;
   padding-right: 0.5em;

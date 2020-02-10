@@ -147,8 +147,8 @@ class FacsViewer{
       }
       if (obj.images){
         //TODO: Update this to deal with image + link.
-        for (let img of obj.images){
-          this.images.push((this.folder != '')? this.folder + img: img);
+        for (let image of obj.images){
+          this.images.push({img: (this.folder != '')? this.folder + image.img:image.img});
         }
       }
       if (obj.subfolders){
