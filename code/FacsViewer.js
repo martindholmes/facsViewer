@@ -62,6 +62,9 @@ class FacsViewer{
       //Whether to show additional info other than images.
       this.showExtraInfo = (options.showExtraInfo == false)? false:true;
 
+      //If links are supplied, what text should be used for the link?
+      this.linkText = options.linkText || 'Link';
+
       //How much to scale an image by when resizing.
       this.scaleFactor = options.scaleFactor || 0.3;
 
@@ -301,6 +304,12 @@ class FacsViewer{
       div.setAttribute('class', 'facsViewerThumb');
       let c = closer.cloneNode(true);
       c.getElementsByTagName('span')[0].innerHTML = fName;
+      if (this.images[i].link){
+        let imgLink = document.createElement('a');
+        imgLink.setAttribute('href', this.images[i].link);
+        imgLink.appendChild(document.createTextNode(this.linkText));
+        c.insertBefore(imgLink, c.getElementsByTagName('a')[0]);
+      }
       div.appendChild(c);
       let div2 = document.createElement('div');
       let divLa = document.createElement('div');
