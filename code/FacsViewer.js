@@ -60,7 +60,7 @@ class FacsViewer{
       this.parser = new DOMParser();
 
       //Whether to show additional info other than images.
-      this.showExtraInfo = options.showExtraInfo || true;
+      this.showExtraInfo = (options.showExtraInfo == false)? false:true;
 
       //How much to scale an image by when resizing.
       this.scaleFactor = options.scaleFactor || 0.3;
