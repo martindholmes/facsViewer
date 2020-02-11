@@ -233,6 +233,17 @@ class FacsViewer{
   * listing to render a facsimile viewer on the page.
   */
   render(){
+    //If there's a hash in the URL, preload that image.
+    if (document.location.hash.length > 2){
+      let str = document.location.hash;
+      let targImg = this.folder + str.substring(1);
+      let preload = document.createElement('link');
+      preload.href = targImg;
+      preload.rel = "preload";
+      preload.as = "image";
+      document.body.appendChild(preload);
+    }
+
     this.displayEl.innerHTML = '';
     if (this.showExtraInfo){
       this.infoEl.innerHTML = '';
@@ -335,15 +346,15 @@ class FacsViewer{
       }
       else{
         let thumb = this.funcFolderToThumbnail(this.images[i].img);
-        console.log('Using thumbnail ' + thumb);
+        //console.log('Using thumbnail ' + thumb);
         let pic = document.createElement('picture');
         let src1 = document.createElement('source');
-        src1.setAttribute('media', '(max-width: 6em)');
-        src1.setAttribute('srcset', thumb);
+        src1.setAttribute('media', '(min-width: 7em)');
+        src1.setAttribute('srcset', this.images[i].img);
         pic.appendChild(src1);
         let src2 = document.createElement('source');
-        src2.setAttribute('media', '(min-width: 6.1em)');
-        src2.setAttribute('srcset', this.images[i].img);
+        //src2.setAttribute('media', '(min-width: 6.1em)');
+        src2.setAttribute('srcset', thumb);
         pic.appendChild(src2);
         let img = document.createElement('img');
         img.setAttribute('src', this.images[i].img);

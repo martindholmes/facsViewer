@@ -73,8 +73,7 @@ div.facsViewerThumb div.closer{
   width: 100%;
   height: 4vh;
   padding: 0.25em;
-  margin-left: auto;
-  margin-right: auto;
+  margin: auto;
 }
 
 a.arrow, a.arrow:hover{
