@@ -149,7 +149,6 @@ class FacsViewer{
         this.folder = obj.folder.replace(/\/$/, '') + '/';
       }
       if (obj.images){
-        //TODO: Update this to deal with image + link.
         for (let image of obj.images){
           this.images.push({img: (this.folder != '')? this.folder + image.img:image.img});
           if (image.hasOwnProperty('link')){
@@ -455,21 +454,25 @@ class FacsViewer{
     if ((div !== null)&&(img !== null)){
       let leftOrigin = 50;
       while (img.getBoundingClientRect().x < 20){
-        //console.log(img.getBoundingClientRect().x);
         leftOrigin--;
         div.style.transformOrigin = leftOrigin + '% 0%';
       }
-      /*console.log(img.getBoundingClientRect());
-      let topMargin = 0;
-      if (img.getBoundingClientRect().y < 100){
-        img.style.marginTop = '';
-      }*/
-      let topMargin = 0;
-      while(img.getBoundingClientRect().y > 100){
-        topMargin = topMargin - 10;
-        img.style.marginTop = topMargin + 'px';
-      }
     }
+  }
+
+  /**
+  * @function FacsViewer~resetImage
+  * @description Function to reset the size and orientation of an image
+  * to its default.
+  * @param {String} divId The id of the div containing the image.
+  */
+  resetImage(divId){
+    let div = document.getElementById(divId);
+    let cont = div.querySelector('div.imgContainer');
+    let img = div.querySelector('img');
+    div.style.transform = 'none';
+    cont.style.transform = 'none';
+    img.style.transform = 'none';
   }
 
   /**
