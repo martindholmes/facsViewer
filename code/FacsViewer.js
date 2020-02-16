@@ -341,6 +341,7 @@ class FacsViewer{
         let img = document.createElement('img');
         img.setAttribute('src', this.images[i].img);
         img.setAttribute('crossorigin', 'anonymous');
+        img.setAttribute('loading', 'lazy');
         img.setAttribute('title', fName);
         a.appendChild(img);
       }
