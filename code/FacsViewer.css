@@ -128,6 +128,7 @@ div.facsViewerThumb div.imgContainer{
   transition-duration: 0.2s;
   width: 100%;
   flex-grow: 3;
+  min-height: 90vh;
 }
 
 div.facsViewerThumb:target img{
