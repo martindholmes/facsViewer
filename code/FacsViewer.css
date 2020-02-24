@@ -106,6 +106,10 @@ div.facsViewerThumb:target{
   z-index: 1000;
 }
 
+div.facsViewerThumb:target div.imgContainer{
+  min-height: 90vh;
+}
+
 div.facsViewerThumb > div > div{
   background-color: #ffffff;
 }
@@ -128,7 +132,6 @@ div.facsViewerThumb div.imgContainer{
   transition-duration: 0.2s;
   width: 100%;
   flex-grow: 3;
-  min-height: 90vh;
 }
 
 div.facsViewerThumb:target img{
