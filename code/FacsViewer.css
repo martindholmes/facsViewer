@@ -70,7 +70,7 @@ div.facsViewerThumb div.closer{
   background-color: lightgray;
   color: black;
   border: solid 1pt gray;
-  width: 100%;
+  width: calc(100% - 0.5em);
   height: 4vh;
   padding: 0.25em;
   margin: auto;
