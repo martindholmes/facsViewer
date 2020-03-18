@@ -273,9 +273,10 @@ class FacsViewer{
     document.body.appendChild(this.progressDiv);
 
     //If there's a hash in the URL, preload that image.
+    let targId = '';
     if (document.location.hash.length > 2){
-      let str = document.location.hash;
-      let targImg = this.folder + str.substring(1);
+      targId = document.location.hash.substring(1);
+      let targImg = this.folder + targId;
       let preload = document.createElement('link');
       preload.href = targImg;
       preload.rel = "preload";
@@ -381,7 +382,9 @@ class FacsViewer{
         img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
         img.setAttribute('src', this.images[i].img);
         img.setAttribute('crossorigin', 'anonymous');
-        img.setAttribute('loading', 'lazy');
+        if (id !== targId){
+          img.setAttribute('loading', 'lazy');
+        }
         img.setAttribute('title', fName);
         a.appendChild(img);
       }
@@ -399,9 +402,14 @@ class FacsViewer{
         pic.appendChild(src2);
         let img = document.createElement('img');
         img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
-        img.setAttribute('src', thumb);
+        if (id == targId){
+          img.setAttribute('src', this.images[i].img);
+        }
+        else{
+          img.setAttribute('src', thumb);
+          img.setAttribute('loading', 'lazy');
+        }
         img.setAttribute('crossorigin', 'anonymous');
-        img.setAttribute('loading', 'lazy');
         img.setAttribute('title', fName);
         pic.appendChild(img);
         a.appendChild(pic);
@@ -439,7 +447,7 @@ class FacsViewer{
     //If there's a hash in the URL, select it.
     if (document.location.hash.length > 2){
       let str = document.location.hash;
-      document.location.hash = '';
+      //document.location.hash = '';
       setTimeout(function(){document.location.hash = str;}, 200);
     }
     //Finally, set the cursor back to regular.
