@@ -36,7 +36,7 @@
   * which is the URI of the folder whose image list it will retrieve,
   * and whose images it will display. That property can also be set on
   * the fly, causing the object to display a different set of images.
-  *
+  *rm
   *
   */
 class FacsViewer{
@@ -52,6 +52,13 @@ class FacsViewer{
       //object with img and link properties, so that if required, each
       //image can have a link to an exernal location.
       this.images = [];
+
+      //Counter for images that have been successfully loaded.
+      this.imagesLoaded = 0;
+
+      //Progress bar and container for tracking image loading. Instantiated during rendering.
+      this.progressDiv = null;
+      this.progress = null;
 
       //Array for links to subfolders to display.
       this.subfolders = [];
@@ -107,6 +114,22 @@ class FacsViewer{
       console.log('ERROR: ' + e.message);
     }
   }
+
+  /**
+  * @function FacsViewer~imageLoaded
+  * @description Called by each individual image when its content
+  *              has loaded, so that overall loading can be tracked.
+  */
+  imageLoaded(){
+    this.imagesLoaded++;
+    this.progress.setAttribute('value', this.imagesLoaded);
+    //console.log(this.imagesLoaded + ' / ' + this.images.length +  ' images loaded so far.');
+    if (this.imagesLoaded >= this.images.length){
+      document.body.style.cursor = 'default';
+      this.progressDiv.style.display = 'none';
+    }
+  }
+
   /**
   * @function FacsViewer~setFolder
   * @description Sets the folder to browse, and kicks off the process of
@@ -233,6 +256,22 @@ class FacsViewer{
   * listing to render a facsimile viewer on the page.
   */
   render(){
+    //This takes a long while. Set a progress cursor.
+    window.setTimeout(function(){console.log('Rendering...'); document.body.style.cursor = 'progress';}, 10);
+
+    //And construct a progress bar.
+    this.progressDiv = document.createElement('div');
+    this.progressDiv.setAttribute('id', 'facsViewerProgressDiv');
+    this.progress = document.createElement('progress');
+    this.progress.setAttribute('value', '0');
+    this.progress.setAttribute('max', this.images.length);
+    let prgLabel = document.createElement('label');
+    prgLabel.setAttribute('for', 'facsViewerProgress');
+    prgLabel.appendChild(document.createTextNode('Loading images...'));
+    this.progressDiv.appendChild(prgLabel);
+    this.progressDiv.appendChild(this.progress);
+    document.body.appendChild(this.progressDiv);
+
     //If there's a hash in the URL, preload that image.
     if (document.location.hash.length > 2){
       let str = document.location.hash;
@@ -339,6 +378,7 @@ class FacsViewer{
       a.setAttribute('href', '#' + id);
       if (this.funcFolderToThumbnail == null){
         let img = document.createElement('img');
+        img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
         img.setAttribute('src', this.images[i].img);
         img.setAttribute('crossorigin', 'anonymous');
         img.setAttribute('loading', 'lazy');
@@ -358,7 +398,8 @@ class FacsViewer{
         src2.setAttribute('srcset', thumb);
         pic.appendChild(src2);
         let img = document.createElement('img');
-        img.setAttribute('src', this.images[i].img);
+        img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
+        img.setAttribute('src', thumb);
         img.setAttribute('crossorigin', 'anonymous');
         img.setAttribute('loading', 'lazy');
         img.setAttribute('title', fName);
@@ -401,7 +442,10 @@ class FacsViewer{
       document.location.hash = '';
       setTimeout(function(){document.location.hash = str;}, 200);
     }
-
+    //Finally, set the cursor back to regular.
+    window.addEventListener('load', (event) => {
+      console.log('Done...'); document.body.style.cursor = 'default';
+    });
   }
 
   /**
