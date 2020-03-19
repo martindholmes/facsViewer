@@ -260,17 +260,26 @@ class FacsViewer{
     window.setTimeout(function(){console.log('Rendering...'); document.body.style.cursor = 'progress';}, 10);
 
     //And construct a progress bar.
-    this.progressDiv = document.createElement('div');
-    this.progressDiv.setAttribute('id', 'facsViewerProgressDiv');
-    this.progress = document.createElement('progress');
-    this.progress.setAttribute('value', '0');
-    this.progress.setAttribute('max', this.images.length);
-    let prgLabel = document.createElement('label');
-    prgLabel.setAttribute('for', 'facsViewerProgress');
-    prgLabel.appendChild(document.createTextNode('Loading images...'));
-    this.progressDiv.appendChild(prgLabel);
-    this.progressDiv.appendChild(this.progress);
-    document.body.appendChild(this.progressDiv);
+    if (this.progressDiv == null){
+      this.progressDiv = document.createElement('div');
+      this.progressDiv.setAttribute('id', 'facsViewerProgressDiv');
+      this.progress = document.createElement('progress');
+      let prgLabel = document.createElement('label');
+      prgLabel.setAttribute('for', 'facsViewerProgress');
+      prgLabel.appendChild(document.createTextNode('Loading images...'));
+      this.progressDiv.appendChild(prgLabel);
+      this.progressDiv.appendChild(this.progress);
+      document.body.appendChild(this.progressDiv);
+    }
+    this.imagesLoaded = 0;
+    if (this.images.length > 0){
+      this.progressDiv.style.display = 'block';
+      this.progress.setAttribute('max', this.images.length);
+      this.progress.setAttribute('value', '0');
+    }
+    else{
+      this.progressDiv.style.display = 'none';
+    }
 
     //If there's a hash in the URL, preload that image.
     let targId = '';
