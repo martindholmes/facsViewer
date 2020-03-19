@@ -88,6 +88,7 @@ div.closer a:not(.arrow), div.closer a:not(.arrow):hover, div.closer a:not(.arro
   text-decoration: none;
   color: black;
   padding-right: 0.5em;
+  padding-left: 0.5em;
 }
 
 /* Let the image take up most of the box. */
