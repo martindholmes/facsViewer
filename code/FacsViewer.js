@@ -456,7 +456,7 @@ class FacsViewer{
     //If there's a hash in the URL, select it.
     if (document.location.hash.length > 2){
       let str = document.location.hash;
-      //document.location.hash = '';
+      document.location.hash = '';
       setTimeout(function(){document.location.hash = str;}, 200);
     }
     //Finally, set the cursor back to regular.
