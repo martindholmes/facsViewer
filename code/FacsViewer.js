@@ -56,6 +56,10 @@ class FacsViewer{
       //Counter for images that have been successfully loaded.
       this.imagesLoaded = 0;
 
+      //When displaying large numbers of images, display in sets. Use a cutoff.
+      this.maxImagesPerPage = options.maxImagesPerPage || 50; //Above this, break into sets.
+      this.imagesPerPage    = options.imagesPerPage || 20;
+
       //Progress bar and container for tracking image loading. Instantiated during rendering.
       this.progressDiv = null;
       this.progress = null;
@@ -90,6 +94,9 @@ class FacsViewer{
         this.displayEl.setAttribute('id', 'facsViewer');
         document.getElementsByTagName('body')[0].appendChild(this.displayEl);
       }
+
+      //Get the target id if there's a hash in the URL.
+      this.targId = document.location.hash.substring(1) || '';
 
       //Parse out the URLSearchParams
       this.searchParams = new URLSearchParams(decodeURI(document.location.search));
@@ -282,10 +289,8 @@ class FacsViewer{
     }
 
     //If there's a hash in the URL, preload that image.
-    let targId = '';
-    if (document.location.hash.length > 2){
-      targId = document.location.hash.substring(1);
-      let targImg = this.folder + targId;
+    if (this.targId.length > 0){
+      let targImg = this.folder + this.targId;
       let preload = document.createElement('link');
       preload.href = targImg;
       preload.rel = "preload";
@@ -391,9 +396,6 @@ class FacsViewer{
         img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
         img.setAttribute('src', this.images[i].img);
         img.setAttribute('crossorigin', 'anonymous');
-        if (id !== targId){
-          img.setAttribute('loading', 'lazy');
-        }
         img.setAttribute('title', fName);
         a.appendChild(img);
       }
@@ -411,7 +413,7 @@ class FacsViewer{
         pic.appendChild(src2);
         let img = document.createElement('img');
         img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
-        if (id == targId){
+        if (id == this.targId){
           img.setAttribute('src', this.images[i].img);
         }
         else{
@@ -454,10 +456,9 @@ class FacsViewer{
     body.removeChild(plus);
     body.removeChild(minus);
     //If there's a hash in the URL, select it.
-    if (document.location.hash.length > 2){
-      let str = document.location.hash;
+    if (this.targId.length > 1){
       document.location.hash = '';
-      setTimeout(function(){document.location.hash = str;}, 200);
+      setTimeout(function(){document.location.hash = '#' _ this.targId;}, 200);
     }
     //Finally, set the cursor back to regular.
     window.addEventListener('load', (event) => {
