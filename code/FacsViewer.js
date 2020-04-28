@@ -39,9 +39,14 @@
   *rm
   *
   */
+// eslint-disable-next-line no-unused-vars
 class FacsViewer{
   constructor(options = {}){
     try {
+      //Some constants to make things easier to read.
+      this.FORWARD  = 0;
+      this.BACKWARD = 1;
+
       //A match pattern to confirm that filepaths point to images.
       this.ptnImagePath = /.+\.((jpe?g)|(png)|(svg)|(gif))$/i;
 
@@ -260,11 +265,20 @@ class FacsViewer{
   /**
   * @function FacsViewer~render
   * @description This is the meat of the viewer. It processes a server index
-  * listing to render a facsimile viewer on the page.
+  * listing or a JSON-configured listing to render a facsimile viewer on the page.
+  * @param {integer} startFrom the point in the images array from which to start
+  *                            rendering. Defaults to 0, which means to start 
+  *                            from the beginning.
+  * @param {integer} direction the direction to go from the starting point. We may
+  *                            be moving forward or backward through the image set.
   */
-  render(){
+  render(startFrom = 0, direction = this.FORWARD){
     //This takes a long while. Set a progress cursor.
     window.setTimeout(function(){console.log('Rendering...'); document.body.style.cursor = 'progress';}, 10);
+
+    //Figure out the range of images that needs to be constructed.
+    //IN PROGRESS.
+
 
     //And construct a progress bar.
     if (this.progressDiv == null){
@@ -461,6 +475,7 @@ class FacsViewer{
       setTimeout(function(){document.location.hash = '#' + this.targId;}, 200);
     }
     //Finally, set the cursor back to regular.
+    // eslint-disable-next-line no-unused-vars
     window.addEventListener('load', (event) => {
       console.log('Done...'); document.body.style.cursor = 'default';
     });
