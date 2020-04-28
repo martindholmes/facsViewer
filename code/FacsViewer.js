@@ -46,7 +46,7 @@ class FacsViewer{
       this.ptnImagePath = /.+\.((jpe?g)|(png)|(svg)|(gif))$/i;
 
       //Simpler match for folder paths. We only want subfolders.
-      this.ptnFolderPath = /^[^\/]+\/$/;
+      this.ptnFolderPath = /^[^/]+\/$/;
 
       //Array for images to display. Each array item is actually an
       //object with img and link properties, so that if required, each
@@ -114,7 +114,7 @@ class FacsViewer{
       //main folder path into a path to a thumbnail instead. If this is
       //supplied, then the object will create a <picture> element with
       //multiple sources, allowing rapid loading of thumbnails.
-      let funcFolderToThumbnail = options.funcFolderToThumbnail || null;
+      this.funcFolderToThumbnail = options.funcFolderToThumbnail || null;
 
     }
     catch(e){
@@ -181,7 +181,7 @@ class FacsViewer{
       if (obj.images){
         for (let image of obj.images){
           this.images.push({img: (this.folder != '')? this.folder + image.img:image.img});
-          if (image.hasOwnProperty('link')){
+          if (Object.prototype.hasOwnProperty.call(image, 'link')){
             this.images[this.images.length-1].link = image.link;
           }
         }
@@ -305,7 +305,7 @@ class FacsViewer{
       s.appendChild(document.createTextNode(this.folder));
       this.infoEl.appendChild(s);
       let link = document.createElement('a');
-      link.addEventListener('click', function(){this.setFolder(this.folder.replace(/[^\/]+\/$/, ''))}.bind(this));
+      link.addEventListener('click', function(){this.setFolder(this.folder.replace(/[^/]+\/$/, ''))}.bind(this));
       link.setAttribute('href', '#');
       link.setAttribute('title', 'Go up to the parent folder.');
       link.appendChild(document.createTextNode('⏶'));
@@ -365,13 +365,13 @@ class FacsViewer{
       let fName = this.images[i].img.split('/').pop();
       let lastName = (i > 0)? this.images[i-1].img.split('/').pop() : this.images[this.images.length-1].img.split('/').pop();
       let nextName = (i < this.images.length - 1)? this.images[i+1].img.split('/').pop() : this.images[0].img.split('/').pop();
-      let id = fName.replace(/[\s'",\?\!@#$%\[\]\{\};:]+/g, '_');
+      let id = fName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
       let div = document.createElement('div');
       div.setAttribute('id', id);
       div.setAttribute('class', 'facsViewerThumb');
       let c = closer.cloneNode(true);
       c.getElementsByTagName('span')[0].innerHTML = fName;
-      if (this.images[i].hasOwnProperty('link')){
+      if (Object.prototype.hasOwnProperty.call(this.images[i], 'link')){
         let imgLink = document.createElement('a');
         imgLink.setAttribute('href', this.images[i].link);
         imgLink.appendChild(document.createTextNode(this.linkText));
@@ -458,7 +458,7 @@ class FacsViewer{
     //If there's a hash in the URL, select it.
     if (this.targId.length > 1){
       document.location.hash = '';
-      setTimeout(function(){document.location.hash = '#' _ this.targId;}, 200);
+      setTimeout(function(){document.location.hash = '#' + this.targId;}, 200);
     }
     //Finally, set the cursor back to regular.
     window.addEventListener('load', (event) => {
@@ -502,13 +502,13 @@ class FacsViewer{
     let div = document.getElementById(divId);
     if (div !== null){
       let tf = div.style.transform;
-      let strCurrScale = tf.replace(/^(.*)scale\(([\d\.]+)\)(.*)$/, '$2');
-      let currScale = (strCurrScale.match(/^[\d\.]+$/))? parseFloat(strCurrScale): 1.0;
+      let strCurrScale = tf.replace(/^(.*)scale\(([\d.]+)\)(.*)$/, '$2');
+      let currScale = (strCurrScale.match(/^[\d.]+$/))? parseFloat(strCurrScale): 1.0;
       let newScale = currScale + (enlarge? this.scaleFactor : this.scaleFactor * -1);
 
       div.style.transformOrigin = '50% 0%';
       if (tf.indexOf('scale(') > -1){
-        div.style.transform = tf.replace(/^(.*)scale\(([\d\.]+)\)(.*)$/, '$1scale(' + newScale + ')$3');
+        div.style.transform = tf.replace(/^(.*)scale\(([\d.]+)\)(.*)$/, '$1scale(' + newScale + ')$3');
       }
       else{
         div.style.transform = tf + ' scale(' + newScale + ')';

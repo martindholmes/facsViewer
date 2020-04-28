@@ -1,0 +1,31 @@
+{
+  "name": "facsviewer",
+  "version": "0.8.0",
+  "description": "A simple JavaScript library for displaying digital surrogates for print texts.",
+  "main": "code/FacsViewer.html",
+  "dependencies": {
+    "eslint": "^6.8.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martindholmes/facsViewer.git"
+  },
+  "keywords": [
+    "JavaScript",
+    "ES6",
+    "facsimile",
+    "viewer"
+  ],
+  "author": "Martin Holmes",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/martindholmes/facsViewer/issues"
+  },
+  "homepage": "https://github.com/martindholmes/facsViewer#readme"
+}
