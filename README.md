@@ -5,3 +5,27 @@ This project provides a HTML/CSS/JS facsimile viewer which can read server direc
 If directory listings and CORS cannot be turned on, then the viewer can also work with list of files and folders provided in JSON format.
 
 This was originally developed for UVic HCMC's Digital Victorian Periodical Poetry project, but has been spun off into a separate repository because it is being used in multiple projects.
+
+## Simple configuration
+
+The example file code/FacsViewer.html provides a simple example showing how to use the class:
+
+<code>
+    <script>
+        "use strict";
+
+        var facsViewer = null;
+
+        function testFacsViewer(){
+            console.log('Testing FacsViewer class.');
+            facsViewer = new FacsViewer({folder: 'https://example.org/images/'});
+        }
+
+        window.addEventListener('load', testFacsViewer);
+    </script>
+</code>
+
+## Detailed documentation
+
+The docs folder contains more detailed documentation on the class; more documentation
+on how to use the class will be added soon.
