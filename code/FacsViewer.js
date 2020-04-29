@@ -274,10 +274,18 @@ class FacsViewer{
   * @param {string}  targId    a target id to display after the images have been 
   *                            inserted. Defaults to the class's targId property,
   *                            which is set on load from the location hash.
+  * @param {boolean} startFresh whether or not to clear out existing content before
+  *                             rendering. If not, new content will simply be added.
   */
-  render(startFrom = 0, direction = this.FORWARD, targId = this.initialTargId){
+  render(startFrom = 0, direction = this.FORWARD, targId = this.initialTargId, startFresh = true){
     //This takes a long while. Set a progress cursor.
     window.setTimeout(function(){console.log('Rendering...'); document.body.style.cursor = 'progress';}, 10);
+
+    //Console logging for debugging purposes.
+    console.log(`Rendering starting from ${startFrom} 
+                 going in direction ${direction} 
+                 with target id ${targId}
+                 and startFresh=${startFresh}`);
 
     //Figure out the range of images that needs to be constructed.
     
@@ -314,6 +322,10 @@ class FacsViewer{
       document.body.appendChild(preload);
     }
 
+    //Delete any existing content if we're starting fresh.
+    if (startFresh === true){
+
+    }
     this.displayEl.innerHTML = '';
     if (this.showExtraInfo){
       this.infoEl.innerHTML = '';
