@@ -100,6 +100,10 @@ class FacsViewer{
         document.getElementsByTagName('body')[0].appendChild(this.displayEl);
       }
 
+      //Create a property to point to the template element when we
+      //find or create it.
+      this.templateEl = document.querySelector('template#imgTemplate');
+
       //Get the target id if there's a hash in the URL.
       this.initialTargId = document.location.hash.substring(1) || '';
 
@@ -263,6 +267,100 @@ class FacsViewer{
       this.render();
   }
   /**
+  * @function FacsViewer~addImageTemplate
+  * @description This function adds an HTML <template> element to the 
+  *              document (if one has not already been supplied) which
+  *              can then be used to construct image containers as 
+  *              needed.
+  */
+  addImageTemplate(){
+    if (this.templateEl === null){
+      let tp = document.createElement('template');
+      tp.setAttribute('id', 'imgTemplate');
+      tp.innerHTML = `<div id="str_imgId" class="facsViewerThumb">
+        <div class="closer">
+          <span>str_imgFilename</span>
+          <a href="str_link">${this.linkText}</a>
+          <a href="#">x</a>
+        </div>
+        <div>
+          <div class="controls">
+            <a class="arrow" title="Previous image"
+              href="str_prevImgId">←</a>
+          </div>
+          <div class="imgContainer" id="facsImg_str_imgNum">
+            <a href="str_ImgId">
+              <picture>
+                <source media="(min-width: 7em)" 
+                        srcset="str_img">
+                <source srcset="str_imgThumb">
+                <img src="str_img" crossorigin="anonymous" 
+                  loading="lazy" title="str_imgFilename">
+              </picture>
+            </a>
+          </div>
+          <div class="controls">
+            <a class="arrow" 
+              title="View this image in a separate window.">↗</a>
+            <a class="arrow" data-id="rotate" title="Rotate">↻</a>
+            <a class="arrow" title="Next image"
+              href="str_nextImgId">→</a>
+            <a class="arrow" data-id="enlarge" title="Enlarge">+</a>
+            <a class="arrow" data-id="shrink" title="Shrink">-</a>
+          </div>
+        </div>
+      </div>`;
+
+      document.body.appendChild(tp);
+      this.templateEl = tp;
+    }
+  }
+
+  /**@function FacsViewer~createImageBlock
+  * @description This creates and returns a div element configured
+  *              for a specific image in the listing, based on the
+  *              template which has been created above.
+  * @param {number} i the number of the image in the images array,
+  * @returns {HTMLDivElement} an HTML div element which has not yet
+  *                 been inserted into the document. The calling
+  *                 function will decide where to insert it.
+  */
+  createImageBlock(i){
+    //Sanity check.
+    if (isNaN(i)||(i < 0)||(i >= this.images.length)){
+      throw(`Image number ${i} is not within the bounds of the images array.`);
+    }
+    //Just to be sure
+    this.addImageTemplate();
+
+    //Figure out some strings we need.
+    let fName = this.images[i].img.split('/').pop();
+    let id = fName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
+    let lastName = (i > 0)? this.images[i-1].img.split('/').pop() : this.images[this.images.length-1].img.split('/').pop();
+    let lastId = lastName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
+    let nextName = (i < this.images.length - 1)? this.images[i+1].img.split('/').pop() : this.images[0].img.split('/').pop();
+    let nextId = nextName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
+
+    //Create an element.
+    let div = this.templateEl.cloneNode(true);
+    div.setAttribute('id', id);
+    div.querySelector('div.closer>span').innerHTML = fName;
+    let lnk = div.querySelector('div.closer>a');
+    if (Object.prototype.hasOwnProperty.call(this.images[i], 'link')){
+      lnk.setAttribute('href', this.images[i].link);
+    }
+    else{
+      lnk.parentNode.removeChild(lnk);
+    }
+    div.querySelector('a[href="str_prevImgFilename"]').setAttribute('href', '#' + lastId);
+    div.querySelector('div.imgContainer').setAttribute('id', 'facsImg_' + i.toString());
+    div.querySelector('a[href="str_nextImgFilename"]').setAttribute('href', '#' + nextId);
+    div.querySelector('a[href="str_imgId"]').setAttribute('href', '#' + id);
+//DONE TO HERE: LOTS MORE TO DO.
+
+  }
+
+  /**
   * @function FacsViewer~render
   * @description This is the meat of the viewer. It processes a server index
   * listing or a JSON-configured listing to render a facsimile viewer on the page.
@@ -286,6 +384,10 @@ class FacsViewer{
                  going in direction ${direction} 
                  with target id ${targId}
                  and startFresh=${startFresh}`);
+
+    //Add a template element for images to the document if it's 
+    //not there already.
+    this.addImageTemplate(); 
 
     //Figure out the range of images that needs to be constructed.
     
@@ -323,9 +425,7 @@ class FacsViewer{
     }
 
     //Delete any existing content if we're starting fresh.
-    if (startFresh === true){
-
-    }
+ 
     this.displayEl.innerHTML = '';
     if (this.showExtraInfo){
       this.infoEl.innerHTML = '';
