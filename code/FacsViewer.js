@@ -300,7 +300,7 @@ class FacsViewer{
             </a>
           </div>
           <div class="controls">
-            <a class="arrow" 
+            <a class="arrow" data-id="view"
               title="View this image in a separate window.">↗</a>
             <a class="arrow" data-id="rotate" title="Rotate">↻</a>
             <a class="arrow" title="Next image"
@@ -346,17 +346,54 @@ class FacsViewer{
     div.setAttribute('id', id);
     div.querySelector('div.closer>span').innerHTML = fName;
     let lnk = div.querySelector('div.closer>a');
+
+    //If there's a link for the image, otherwise remove the element.
     if (Object.prototype.hasOwnProperty.call(this.images[i], 'link')){
       lnk.setAttribute('href', this.images[i].link);
     }
     else{
       lnk.parentNode.removeChild(lnk);
     }
+
+    //Set some ids and hrefs.
     div.querySelector('a[href="str_prevImgFilename"]').setAttribute('href', '#' + lastId);
     div.querySelector('div.imgContainer').setAttribute('id', 'facsImg_' + i.toString());
     div.querySelector('a[href="str_nextImgFilename"]').setAttribute('href', '#' + nextId);
     div.querySelector('a[href="str_imgId"]').setAttribute('href', '#' + id);
-//DONE TO HERE: LOTS MORE TO DO.
+
+    //Now handle the actual image. Whether there's a thumbnail or not, we'll
+    //provide a regular img tag.
+    let img = div.querySelector('img[src="str_img"]');
+    img.setAttribute('src', this.images[i].img);
+    img.setAttribute('title', fName);
+
+    //Now we fork based on whether a function has been provided to generate 
+    //a thumbnail URL. If not, delete the source elements.
+    if (this.funcFolderToThumbnail == null){
+      for (let s of div.querySelectorAll('source')){
+        s.parentNode.removeChild(s);
+      }
+    }
+    //Otherwise, we generate the thumbnail URL and populate source elements.
+    else{
+      let thumb = this.funcFolderToThumbnail(this.images[i].img);
+      div.querySelector('source[srcset="str_img"]').setAttribute('srcset', this.images[i].img);
+      div.querySelector('source[srcset="str_imgThumb"]').setAttribute('srcset', thumb);
+    }
+
+    //Now the controls on the right: they need event listeners.
+    div.querySelector('a[data-id="view"]').addEventListener('click', 
+                      function(){window.open(this.images[i].img)}.bind(this));
+    div.querySelector('a[data-id="rotate"]').addEventListener('click', 
+                      function(){this.rotateImage(`facsImg_${i}`);}.bind(this));
+    div.querySelector('a[data-id="enlarge"]').addEventListener('click', 
+                      function(){this.scaleImage(`facsImg_${i}`, true);}.bind(this));
+    div.querySelector('a[data-id="shrink"]').addEventListener('click', 
+                      function(){this.scaleImage(`facsImg_${i}`, false);}.bind(this));
+
+    //Return what we built.
+    return div;
+                  
 
   }
 
