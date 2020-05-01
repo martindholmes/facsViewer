@@ -289,7 +289,7 @@ class FacsViewer{
               href="str_prevImgId">←</a>
           </div>
           <div class="imgContainer" id="facsImg_str_imgNum">
-            <a href="str_ImgId">
+            <a href="str_imgId">
               <picture>
                 <source media="(min-width: 7em)" 
                         srcset="str_img">
@@ -342,7 +342,7 @@ class FacsViewer{
     let nextId = nextName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
 
     //Create an element.
-    let div = this.templateEl.cloneNode(true);
+    let div = this.templateEl.content.cloneNode(true);
     div.setAttribute('id', id);
     div.querySelector('div.closer>span').innerHTML = fName;
     let lnk = div.querySelector('div.closer>a');
@@ -356,9 +356,9 @@ class FacsViewer{
     }
 
     //Set some ids and hrefs.
-    div.querySelector('a[href="str_prevImgFilename"]').setAttribute('href', '#' + lastId);
+    div.querySelector('a[href="str_prevImgId"]').setAttribute('href', '#' + lastId);
     div.querySelector('div.imgContainer').setAttribute('id', 'facsImg_' + i.toString());
-    div.querySelector('a[href="str_nextImgFilename"]').setAttribute('href', '#' + nextId);
+    div.querySelector('a[href="str_nextImgId"]').setAttribute('href', '#' + nextId);
     div.querySelector('a[href="str_imgId"]').setAttribute('href', '#' + id);
 
     //Now handle the actual image. Whether there's a thumbnail or not, we'll
@@ -527,7 +527,8 @@ class FacsViewer{
     minus.appendChild(document.createTextNode('-'));
     body.appendChild(minus);
     for (let i=0; i<this.images.length; i++){
-      let fName = this.images[i].img.split('/').pop();
+      let div = this.createImageBlock(i);
+    /*  let fName = this.images[i].img.split('/').pop();
       let lastName = (i > 0)? this.images[i-1].img.split('/').pop() : this.images[this.images.length-1].img.split('/').pop();
       let nextName = (i < this.images.length - 1)? this.images[i+1].img.split('/').pop() : this.images[0].img.split('/').pop();
       let id = fName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
@@ -611,6 +612,7 @@ class FacsViewer{
       divCtrls.appendChild(m);
       div2.appendChild(divCtrls);
       div.appendChild(div2);
+      */
       this.displayEl.appendChild(div);
     }
     body.removeChild(closer);
