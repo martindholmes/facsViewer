@@ -333,6 +333,8 @@ class FacsViewer{
     //Just to be sure
     this.addImageTemplate();
 
+console.log('entered createImageBlock');
+
     //Figure out some strings we need.
     let fName = this.images[i].img.split('/').pop();
     let id = fName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
@@ -342,9 +344,14 @@ class FacsViewer{
     let nextId = nextName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
 
     //Create an element.
-    let div = this.templateEl.content.cloneNode(true);
+    let clone = this.templateEl.content.cloneNode(true);
+
+    let div = clone.querySelector('div');
+
     div.setAttribute('id', id);
-    div.querySelector('div.closer>span').innerHTML = fName;
+
+    div.querySelector('div.closer>span').innerHTML = fName;;
+
     let lnk = div.querySelector('div.closer>a');
 
     //If there's a link for the image, otherwise remove the element.
