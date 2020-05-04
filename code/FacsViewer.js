@@ -350,7 +350,7 @@ console.log('entered createImageBlock');
 
     div.setAttribute('id', id);
 
-    div.querySelector('div.closer>span').innerHTML = fName;;
+    div.querySelector('div.closer>span').innerHTML = fName;
 
     let lnk = div.querySelector('div.closer>a');
 
@@ -373,6 +373,7 @@ console.log('entered createImageBlock');
     let img = div.querySelector('img[src="str_img"]');
     img.setAttribute('src', this.images[i].img);
     img.setAttribute('title', fName);
+    img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
 
     //Now we fork based on whether a function has been provided to generate 
     //a thumbnail URL. If not, delete the source elements.
