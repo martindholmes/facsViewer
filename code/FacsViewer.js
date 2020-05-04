@@ -189,7 +189,12 @@ class FacsViewer{
       }
       if (obj.images){
         for (let image of obj.images){
-          this.images.push({img: (this.folder != '')? this.folder + image.img:image.img});
+          //Create a normalized id for it, which we'll use later.
+          let id = image.img.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
+          this.images.push({img: (this.folder != '')? this.folder + image.img:image.img, 
+                            inserted: false,
+                            id: id, 
+                            name: image.img});
           if (Object.prototype.hasOwnProperty.call(image, 'link')){
             this.images[this.images.length-1].link = image.link;
           }
@@ -333,15 +338,11 @@ class FacsViewer{
     //Just to be sure
     this.addImageTemplate();
 
-console.log('entered createImageBlock');
-
     //Figure out some strings we need.
-    let fName = this.images[i].img.split('/').pop();
-    let id = fName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
-    let lastName = (i > 0)? this.images[i-1].img.split('/').pop() : this.images[this.images.length-1].img.split('/').pop();
-    let lastId = lastName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
-    let nextName = (i < this.images.length - 1)? this.images[i+1].img.split('/').pop() : this.images[0].img.split('/').pop();
-    let nextId = nextName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
+    let fName    = this.images[i].name;
+    let id       = this.images[i].id;
+    let lastId   = (i > 0)? this.images[i-1].id : this.images[this.images.length-1].id;
+    let nextId   = (i < this.images.length - 1)? this.images[i+1].id : this.images[0].id;
 
     //Create an element.
     let clone = this.templateEl.content.cloneNode(true);
@@ -498,138 +499,13 @@ console.log('entered createImageBlock');
         this.displayEl.appendChild(ul);
       }
     }
-    let body = document.getElementsByTagName('body')[0];
-    let closer = document.createElement('div');
-    closer.setAttribute('class', 'closer');
-    let lbl = document.createElement('span');
-    lbl.appendChild(document.createTextNode('filename'));
-    let closeLink = document.createElement('a');
-    closeLink.setAttribute('href', '#');
-    closeLink.appendChild(document.createTextNode('x'));
-    closer.appendChild(lbl);
-    closer.appendChild(closeLink);
-    body.appendChild(closer);
-    let leftArrow = document.createElement('a');
-    leftArrow.setAttribute('class', 'arrow');
-    leftArrow.appendChild(document.createTextNode('←'));
-    body.appendChild(leftArrow);
-    let rightArrow = document.createElement('a');
-    rightArrow.setAttribute('class', 'arrow');
-    rightArrow.appendChild(document.createTextNode('→'));
-    body.appendChild(rightArrow);
-    let jumper = document.createElement('a');
-    jumper.setAttribute('class', 'arrow');
-    jumper.setAttribute('title', 'View this image in a separate window.')
-    jumper.appendChild(document.createTextNode('↗'));
-    body.appendChild(jumper);
-    let rotator = document.createElement('a');
-    rotator.setAttribute('class', 'arrow');
-    rotator.appendChild(document.createTextNode('↻'));
-    body.appendChild(rotator);
-    let plus = document.createElement('a');
-    plus.setAttribute('class', 'arrow');
-    plus.appendChild(document.createTextNode('+'));
-    body.appendChild(plus);
-    let minus = document.createElement('a');
-    minus.setAttribute('class', 'arrow');
-    minus.appendChild(document.createTextNode('-'));
-    body.appendChild(minus);
+    
     for (let i=0; i<this.images.length; i++){
       let div = this.createImageBlock(i);
-    /*  let fName = this.images[i].img.split('/').pop();
-      let lastName = (i > 0)? this.images[i-1].img.split('/').pop() : this.images[this.images.length-1].img.split('/').pop();
-      let nextName = (i < this.images.length - 1)? this.images[i+1].img.split('/').pop() : this.images[0].img.split('/').pop();
-      let id = fName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
-      let div = document.createElement('div');
-      div.setAttribute('id', id);
-      div.setAttribute('class', 'facsViewerThumb');
-      let c = closer.cloneNode(true);
-      c.getElementsByTagName('span')[0].innerHTML = fName;
-      if (Object.prototype.hasOwnProperty.call(this.images[i], 'link')){
-        let imgLink = document.createElement('a');
-        imgLink.setAttribute('href', this.images[i].link);
-        imgLink.appendChild(document.createTextNode(this.linkText));
-        c.insertBefore(imgLink, c.getElementsByTagName('a')[0]);
-      }
-      div.appendChild(c);
-      let div2 = document.createElement('div');
-      let divLa = document.createElement('div');
-      divLa.setAttribute('class', 'controls');
-      let la = leftArrow.cloneNode(true);
-      la.setAttribute('href', '#' + lastName);
-      divLa.appendChild(la);
-      div2.appendChild(divLa);
-      let divImg = document.createElement('div');
-      divImg.setAttribute('class', 'imgContainer');
-      divImg.setAttribute('id', 'facsImg_' + i);
-
-      let a = document.createElement('a');
-      a.setAttribute('href', '#' + id);
-      if (this.funcFolderToThumbnail == null){
-        let img = document.createElement('img');
-        img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
-        img.setAttribute('src', this.images[i].img);
-        img.setAttribute('crossorigin', 'anonymous');
-        img.setAttribute('title', fName);
-        a.appendChild(img);
-      }
-      else{
-        let thumb = this.funcFolderToThumbnail(this.images[i].img);
-        //console.log('Using thumbnail ' + thumb);
-        let pic = document.createElement('picture');
-        let src1 = document.createElement('source');
-        src1.setAttribute('media', '(min-width: 7em)');
-        src1.setAttribute('srcset', this.images[i].img);
-        pic.appendChild(src1);
-        let src2 = document.createElement('source');
-        //src2.setAttribute('media', '(min-width: 6.1em)');
-        src2.setAttribute('srcset', thumb);
-        pic.appendChild(src2);
-        let img = document.createElement('img');
-        img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
-        if (id == targId){
-          img.setAttribute('src', this.images[i].img);
-        }
-        else{
-          img.setAttribute('src', thumb);
-          img.setAttribute('loading', 'lazy');
-        }
-        img.setAttribute('crossorigin', 'anonymous');
-        img.setAttribute('title', fName);
-        pic.appendChild(img);
-        a.appendChild(pic);
-      }
-      divImg.appendChild(a);
-      div2.appendChild(divImg);
-      let divCtrls = document.createElement('div');
-      divCtrls.setAttribute('class', 'controls');
-      let ju = jumper.cloneNode(true);
-      ju.addEventListener('click', function(){window.open(this.images[i].img)}.bind(this));
-      divCtrls.appendChild(ju);
-      let ro = rotator.cloneNode(true);
-      ro.addEventListener('click', function(){this.rotateImage('facsImg_' + i);}.bind(this));
-      divCtrls.appendChild(ro);
-      let ra = rightArrow.cloneNode(true);
-      ra.setAttribute('href', '#' + nextName);
-      divCtrls.appendChild(ra);
-      let p = plus.cloneNode(true);
-      p.addEventListener('click', function(){this.scaleImage('facsImg_' + i, true);}.bind(this));
-      divCtrls.appendChild(p);
-      let m = minus.cloneNode(true);
-      m.addEventListener('click', function(){this.scaleImage('facsImg_' + i, false);}.bind(this));
-      divCtrls.appendChild(m);
-      div2.appendChild(divCtrls);
-      div.appendChild(div2);
-      */
       this.displayEl.appendChild(div);
+      this.images[i].inserted = true;
     }
-    body.removeChild(closer);
-    body.removeChild(leftArrow);
-    body.removeChild(rightArrow);
-    body.removeChild(rotator);
-    body.removeChild(jumper);
-    body.removeChild(plus);
-    body.removeChild(minus);
+    
     //If there's a hash in the URL, select it.
     if (targId.length > 1){
       document.location.hash = '';
