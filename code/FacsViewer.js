@@ -412,33 +412,19 @@ class FacsViewer{
   * @function FacsViewer~render
   * @description This is the meat of the viewer. It processes a server index
   * listing or a JSON-configured listing to render a facsimile viewer on the page.
-  * @param {number} startFrom the point in the images array from which to start
-  *                            rendering. Defaults to 0, which means to start 
-  *                            from the beginning.
-  * @param {number} direction the direction to go from the starting point. We may
-  *                            be moving forward or backward through the image set.
+  * If a specific image is the target (with a location hash), then it renders a
+  * subset of images around that target first, before filling in the others.  
   * @param {string}  targId    a target id to display after the images have been 
   *                            inserted. Defaults to the class's targId property,
   *                            which is set on load from the location hash.
-  * @param {boolean} startFresh whether or not to clear out existing content before
-  *                             rendering. If not, new content will simply be added.
   */
-  render(startFrom = 0, direction = this.FORWARD, targId = this.initialTargId, startFresh = true){
+  render(targId = this.initialTargId){
     //This takes a long while. Set a progress cursor.
     window.setTimeout(function(){console.log('Rendering...'); document.body.style.cursor = 'progress';}, 10);
-
-    //Console logging for debugging purposes.
-    console.log(`Rendering starting from ${startFrom} 
-                 going in direction ${direction} 
-                 with target id ${targId}
-                 and startFresh=${startFresh}`);
 
     //Add a template element for images to the document if it's 
     //not there already.
     this.addImageTemplate(); 
-
-    //Figure out the range of images that needs to be constructed.
-    
 
     //And construct a progress bar.
     if (this.progressDiv == null){
