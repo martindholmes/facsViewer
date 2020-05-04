@@ -61,9 +61,11 @@ class FacsViewer{
       //Counter for images that have been successfully loaded.
       this.imagesLoaded = 0;
 
-      //When displaying large numbers of images, display in sets. Use a cutoff.
-      this.maxImagesPerPage = options.maxImagesPerPage || 50; //Above this, break into sets.
-      this.imagesPerPage    = options.imagesPerPage || 20;
+      //When displaying large numbers of images, we may construct an initial
+      //batch to quickly render the ones around a target image, then fill
+      //in the others later. This is the number of images rendered before
+      //and after the target image.
+      this.targetCircleRadius = options.targetCircleRadius || 10;
 
       //Progress bar and container for tracking image loading. Instantiated during rendering.
       this.progressDiv = null;
@@ -500,22 +502,77 @@ class FacsViewer{
       }
     }
     
-    for (let i=0; i<this.images.length; i++){
-      let div = this.createImageBlock(i);
-      this.displayEl.appendChild(div);
-      this.images[i].inserted = true;
+    //Now let's work out the optimal place to start from
+    //in our sequence, and how best to proceed through it.
+    let targIndex = (targId.length > 0)? this.getImageIndexById(targId): -1;
+
+    console.log('targId = ' + targId + ', targIndex = ' + targIndex);
+
+    //If there is a target image, we process in batches.
+    if (targIndex > -1){
+      let startFrom = Math.max(targIndex - this.targetCircleRadius, 0);
+      let endWith   = Math.min(targIndex + this.targetCircleRadius, this.images.length-1);
+      console.log('startFrom: ' + startFrom + ', endWith: ' + endWith);
+
+      //Render the first block of images.
+      for (let i=startFrom; i<=endWith; i++){
+        let div = this.createImageBlock(i);
+        this.displayEl.appendChild(div);
+        this.images[i].inserted = true;
+      }
+
+      //Now reset the location hash to highlight the target image.
+      document.location.hash = '';
+      document.location.hash = '#' + targId;
+      //setTimeout(function(){document.location.hash = '#' + targId;}, 200);
+
+      //Now render the next block of images: endWith to the end.
+      for (let i = endWith+1; i<this.images.length; i++){
+        let div = this.createImageBlock(i);
+        this.displayEl.appendChild(div);
+        this.images[i].inserted = true;
+      }
+
+      //Now render the first batch up to startFrom.
+      for (let i=startFrom-1; i>=0; i--){
+        let div = this.createImageBlock(i);
+        this.displayEl.insertBefore(div, this.displayEl.firstChild);
+        this.images[i].inserted = true;
+      }
+    }
+    //Otherwise we just render them all in order.
+    else{
+      for (let i=0; i<this.images.length; i++){
+        let div = this.createImageBlock(i);
+        this.displayEl.appendChild(div);
+        this.images[i].inserted = true;
+      }
     }
     
-    //If there's a hash in the URL, select it.
-    if (targId.length > 1){
-      document.location.hash = '';
-      setTimeout(function(){document.location.hash = '#' + targId;}, 200);
-    }
     //Finally, set the cursor back to regular.
     // eslint-disable-next-line no-unused-vars
     window.addEventListener('load', (event) => {
       console.log('Done...'); document.body.style.cursor = 'default';
     });
+  }
+
+  /**
+  * @function FacsViewer~getImageIndexById
+  * @description Function to retrieve the index of a specific
+  * image in the images array based on its id. Used to discover
+  * which specific image should be constructed first when processing
+  * large image collections.
+  * @param {string} imgId The id of the image.
+  * @return {number} the index of the item in the array, or -1 if 
+  *                  there is no matching item.
+  */
+  getImageIndexById(imgId){
+    for (let i=0; i<this.images.length; i++){
+      if (this.images[i].id === imgId){
+        return i;
+      }
+    }
+    return -1;
   }
 
   /**
