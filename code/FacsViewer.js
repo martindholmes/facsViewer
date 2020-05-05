@@ -275,7 +275,7 @@ class FacsViewer{
   }
   /**
   * @function FacsViewer~addImageTemplate
-  * @description This function adds an HTML <template> element to the 
+  * @description This function adds an HTML template element to the 
   *              document (if one has not already been supplied) which
   *              can then be used to construct image containers as 
   *              needed.
@@ -549,7 +549,7 @@ class FacsViewer{
   * which specific image should be constructed first when processing
   * large image collections.
   * @param {string} imgId The id of the image.
-  * @return {number} the index of the item in the array, or -1 if 
+  * @returns {number} the index of the item in the array, or -1 if 
   *                  there is no matching item.
   */
   getImageIndexById(imgId){

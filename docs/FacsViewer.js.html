@@ -89,9 +89,11 @@ class FacsViewer{
       //Counter for images that have been successfully loaded.
       this.imagesLoaded = 0;
 
-      //When displaying large numbers of images, display in sets. Use a cutoff.
-      this.maxImagesPerPage = options.maxImagesPerPage || 50; //Above this, break into sets.
-      this.imagesPerPage    = options.imagesPerPage || 20;
+      //When displaying large numbers of images, we may construct an initial
+      //batch to quickly render the ones around a target image, then fill
+      //in the others later. This is the number of images rendered before
+      //and after the target image.
+      this.targetCircleRadius = options.targetCircleRadius || 10;
 
       //Progress bar and container for tracking image loading. Instantiated during rendering.
       this.progressDiv = null;
@@ -127,6 +129,10 @@ class FacsViewer{
         this.displayEl.setAttribute('id', 'facsViewer');
         document.getElementsByTagName('body')[0].appendChild(this.displayEl);
       }
+
+      //Create a property to point to the template element when we
+      //find or create it.
+      this.templateEl = document.querySelector('template#imgTemplate');
 
       //Get the target id if there's a hash in the URL.
       this.initialTargId = document.location.hash.substring(1) || '';
@@ -213,7 +219,12 @@ class FacsViewer{
       }
       if (obj.images){
         for (let image of obj.images){
-          this.images.push({img: (this.folder != '')? this.folder + image.img:image.img});
+          //Create a normalized id for it, which we'll use later.
+          let id = image.img.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
+          this.images.push({img: (this.folder != '')? this.folder + image.img:image.img, 
+                            inserted: false,
+                            id: id, 
+                            name: image.img});
           if (Object.prototype.hasOwnProperty.call(image, 'link')){
             this.images[this.images.length-1].link = image.link;
           }
@@ -291,24 +302,157 @@ class FacsViewer{
       this.render();
   }
   /**
+  * @function FacsViewer~addImageTemplate
+  * @description This function adds an HTML template element to the 
+  *              document (if one has not already been supplied) which
+  *              can then be used to construct image containers as 
+  *              needed.
+  */
+  addImageTemplate(){
+    if (this.templateEl === null){
+      let tp = document.createElement('template');
+      tp.setAttribute('id', 'imgTemplate');
+      tp.innerHTML = `&lt;div id="str_imgId" class="facsViewerThumb">
+        &lt;div class="closer">
+          &lt;span>str_imgFilename&lt;/span>
+          &lt;a href="str_link">${this.linkText}&lt;/a>
+          &lt;a href="#">x&lt;/a>
+        &lt;/div>
+        &lt;div>
+          &lt;div class="controls">
+            &lt;a class="arrow" title="Previous image"
+              href="str_prevImgId">←&lt;/a>
+          &lt;/div>
+          &lt;div class="imgContainer" id="facsImg_str_imgNum">
+            &lt;a href="str_imgId">
+              &lt;picture>
+                &lt;source media="(min-width: 7em)" 
+                        srcset="str_img">
+                &lt;source srcset="str_imgThumb">
+                &lt;img src="str_img" crossorigin="anonymous" 
+                  loading="lazy" title="str_imgFilename">
+              &lt;/picture>
+            &lt;/a>
+          &lt;/div>
+          &lt;div class="controls">
+            &lt;a class="arrow" data-id="view"
+              title="View this image in a separate window.">↗&lt;/a>
+            &lt;a class="arrow" data-id="rotate" title="Rotate">↻&lt;/a>
+            &lt;a class="arrow" title="Next image"
+              href="str_nextImgId">→&lt;/a>
+            &lt;a class="arrow" data-id="enlarge" title="Enlarge">+&lt;/a>
+            &lt;a class="arrow" data-id="shrink" title="Shrink">-&lt;/a>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>`;
+
+      document.body.appendChild(tp);
+      this.templateEl = tp;
+    }
+  }
+
+  /**@function FacsViewer~createImageBlock
+  * @description This creates and returns a div element configured
+  *              for a specific image in the listing, based on the
+  *              template which has been created above.
+  * @param {number} i the number of the image in the images array,
+  * @returns {HTMLDivElement} an HTML div element which has not yet
+  *                 been inserted into the document. The calling
+  *                 function will decide where to insert it.
+  */
+  createImageBlock(i){
+    //Sanity check.
+    if (isNaN(i)||(i &lt; 0)||(i >= this.images.length)){
+      throw(`Image number ${i} is not within the bounds of the images array.`);
+    }
+    //Just to be sure
+    this.addImageTemplate();
+
+    //Figure out some strings we need.
+    let fName    = this.images[i].name;
+    let id       = this.images[i].id;
+    let lastId   = (i > 0)? this.images[i-1].id : this.images[this.images.length-1].id;
+    let nextId   = (i &lt; this.images.length - 1)? this.images[i+1].id : this.images[0].id;
+
+    //Create an element.
+    let clone = this.templateEl.content.cloneNode(true);
+
+    let div = clone.querySelector('div');
+
+    div.setAttribute('id', id);
+
+    div.querySelector('div.closer>span').innerHTML = fName;
+
+    let lnk = div.querySelector('div.closer>a');
+
+    //If there's a link for the image, otherwise remove the element.
+    if (Object.prototype.hasOwnProperty.call(this.images[i], 'link')){
+      lnk.setAttribute('href', this.images[i].link);
+    }
+    else{
+      lnk.parentNode.removeChild(lnk);
+    }
+
+    //Set some ids and hrefs.
+    div.querySelector('a[href="str_prevImgId"]').setAttribute('href', '#' + lastId);
+    div.querySelector('div.imgContainer').setAttribute('id', 'facsImg_' + i.toString());
+    div.querySelector('a[href="str_nextImgId"]').setAttribute('href', '#' + nextId);
+    div.querySelector('a[href="str_imgId"]').setAttribute('href', '#' + id);
+
+    //Now handle the actual image. Whether there's a thumbnail or not, we'll
+    //provide a regular img tag.
+    let img = div.querySelector('img[src="str_img"]');
+    img.setAttribute('src', this.images[i].img);
+    img.setAttribute('title', fName);
+    img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
+
+    //Now we fork based on whether a function has been provided to generate 
+    //a thumbnail URL. If not, delete the source elements.
+    if (this.funcFolderToThumbnail == null){
+      for (let s of div.querySelectorAll('source')){
+        s.parentNode.removeChild(s);
+      }
+    }
+    //Otherwise, we generate the thumbnail URL and populate source elements.
+    else{
+      let thumb = this.funcFolderToThumbnail(this.images[i].img);
+      div.querySelector('source[srcset="str_img"]').setAttribute('srcset', this.images[i].img);
+      div.querySelector('source[srcset="str_imgThumb"]').setAttribute('srcset', thumb);
+    }
+
+    //Now the controls on the right: they need event listeners.
+    div.querySelector('a[data-id="view"]').addEventListener('click', 
+                      function(){window.open(this.images[i].img)}.bind(this));
+    div.querySelector('a[data-id="rotate"]').addEventListener('click', 
+                      function(){this.rotateImage(`facsImg_${i}`);}.bind(this));
+    div.querySelector('a[data-id="enlarge"]').addEventListener('click', 
+                      function(){this.scaleImage(`facsImg_${i}`, true);}.bind(this));
+    div.querySelector('a[data-id="shrink"]').addEventListener('click', 
+                      function(){this.scaleImage(`facsImg_${i}`, false);}.bind(this));
+
+    //Return what we built.
+    return div;
+                  
+
+  }
+
+  /**
   * @function FacsViewer~render
   * @description This is the meat of the viewer. It processes a server index
   * listing or a JSON-configured listing to render a facsimile viewer on the page.
-  * @param {number} startFrom the point in the images array from which to start
-  *                            rendering. Defaults to 0, which means to start 
-  *                            from the beginning.
-  * @param {number} direction the direction to go from the starting point. We may
-  *                            be moving forward or backward through the image set.
+  * If a specific image is the target (with a location hash), then it renders a
+  * subset of images around that target first, before filling in the others.  
   * @param {string}  targId    a target id to display after the images have been 
   *                            inserted. Defaults to the class's targId property,
   *                            which is set on load from the location hash.
   */
-  render(startFrom = 0, direction = this.FORWARD, targId = this.initialTargId){
+  render(targId = this.initialTargId){
     //This takes a long while. Set a progress cursor.
     window.setTimeout(function(){console.log('Rendering...'); document.body.style.cursor = 'progress';}, 10);
 
-    //Figure out the range of images that needs to be constructed.
-    
+    //Add a template element for images to the document if it's 
+    //not there already.
+    this.addImageTemplate(); 
 
     //And construct a progress bar.
     if (this.progressDiv == null){
@@ -342,6 +486,8 @@ class FacsViewer{
       document.body.appendChild(preload);
     }
 
+    //Delete any existing content if we're starting fresh.
+ 
     this.displayEl.innerHTML = '';
     if (this.showExtraInfo){
       this.infoEl.innerHTML = '';
@@ -369,146 +515,78 @@ class FacsViewer{
         this.displayEl.appendChild(ul);
       }
     }
-    let body = document.getElementsByTagName('body')[0];
-    let closer = document.createElement('div');
-    closer.setAttribute('class', 'closer');
-    let lbl = document.createElement('span');
-    lbl.appendChild(document.createTextNode('filename'));
-    let closeLink = document.createElement('a');
-    closeLink.setAttribute('href', '#');
-    closeLink.appendChild(document.createTextNode('x'));
-    closer.appendChild(lbl);
-    closer.appendChild(closeLink);
-    body.appendChild(closer);
-    let leftArrow = document.createElement('a');
-    leftArrow.setAttribute('class', 'arrow');
-    leftArrow.appendChild(document.createTextNode('←'));
-    body.appendChild(leftArrow);
-    let rightArrow = document.createElement('a');
-    rightArrow.setAttribute('class', 'arrow');
-    rightArrow.appendChild(document.createTextNode('→'));
-    body.appendChild(rightArrow);
-    let jumper = document.createElement('a');
-    jumper.setAttribute('class', 'arrow');
-    jumper.setAttribute('title', 'View this image in a separate window.')
-    jumper.appendChild(document.createTextNode('↗'));
-    body.appendChild(jumper);
-    let rotator = document.createElement('a');
-    rotator.setAttribute('class', 'arrow');
-    rotator.appendChild(document.createTextNode('↻'));
-    body.appendChild(rotator);
-    let plus = document.createElement('a');
-    plus.setAttribute('class', 'arrow');
-    plus.appendChild(document.createTextNode('+'));
-    body.appendChild(plus);
-    let minus = document.createElement('a');
-    minus.setAttribute('class', 'arrow');
-    minus.appendChild(document.createTextNode('-'));
-    body.appendChild(minus);
-    for (let i=0; i&lt;this.images.length; i++){
-      let fName = this.images[i].img.split('/').pop();
-      let lastName = (i > 0)? this.images[i-1].img.split('/').pop() : this.images[this.images.length-1].img.split('/').pop();
-      let nextName = (i &lt; this.images.length - 1)? this.images[i+1].img.split('/').pop() : this.images[0].img.split('/').pop();
-      let id = fName.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
-      let div = document.createElement('div');
-      div.setAttribute('id', id);
-      div.setAttribute('class', 'facsViewerThumb');
-      let c = closer.cloneNode(true);
-      c.getElementsByTagName('span')[0].innerHTML = fName;
-      if (Object.prototype.hasOwnProperty.call(this.images[i], 'link')){
-        let imgLink = document.createElement('a');
-        imgLink.setAttribute('href', this.images[i].link);
-        imgLink.appendChild(document.createTextNode(this.linkText));
-        c.insertBefore(imgLink, c.getElementsByTagName('a')[0]);
-      }
-      div.appendChild(c);
-      let div2 = document.createElement('div');
-      let divLa = document.createElement('div');
-      divLa.setAttribute('class', 'controls');
-      let la = leftArrow.cloneNode(true);
-      la.setAttribute('href', '#' + lastName);
-      divLa.appendChild(la);
-      div2.appendChild(divLa);
-      let divImg = document.createElement('div');
-      divImg.setAttribute('class', 'imgContainer');
-      divImg.setAttribute('id', 'facsImg_' + i);
+    
+    //Now let's work out the optimal place to start from
+    //in our sequence, and how best to proceed through it.
+    let targIndex = (targId.length > 0)? this.getImageIndexById(targId): -1;
 
-      let a = document.createElement('a');
-      a.setAttribute('href', '#' + id);
-      if (this.funcFolderToThumbnail == null){
-        let img = document.createElement('img');
-        img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
-        img.setAttribute('src', this.images[i].img);
-        img.setAttribute('crossorigin', 'anonymous');
-        img.setAttribute('title', fName);
-        a.appendChild(img);
+    console.log('targId = ' + targId + ', targIndex = ' + targIndex);
+
+    //If there is a target image, we process in batches.
+    if (targIndex > -1){
+      let startFrom = Math.max(targIndex - this.targetCircleRadius, 0);
+      let endWith   = Math.min(targIndex + this.targetCircleRadius, this.images.length-1);
+      console.log('startFrom: ' + startFrom + ', endWith: ' + endWith);
+
+      //Render the first block of images.
+      for (let i=startFrom; i&lt;=endWith; i++){
+        let div = this.createImageBlock(i);
+        this.displayEl.appendChild(div);
+        this.images[i].inserted = true;
       }
-      else{
-        let thumb = this.funcFolderToThumbnail(this.images[i].img);
-        //console.log('Using thumbnail ' + thumb);
-        let pic = document.createElement('picture');
-        let src1 = document.createElement('source');
-        src1.setAttribute('media', '(min-width: 7em)');
-        src1.setAttribute('srcset', this.images[i].img);
-        pic.appendChild(src1);
-        let src2 = document.createElement('source');
-        //src2.setAttribute('media', '(min-width: 6.1em)');
-        src2.setAttribute('srcset', thumb);
-        pic.appendChild(src2);
-        let img = document.createElement('img');
-        img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
-        if (id == targId){
-          img.setAttribute('src', this.images[i].img);
-        }
-        else{
-          img.setAttribute('src', thumb);
-          img.setAttribute('loading', 'lazy');
-        }
-        img.setAttribute('crossorigin', 'anonymous');
-        img.setAttribute('title', fName);
-        pic.appendChild(img);
-        a.appendChild(pic);
-      }
-      divImg.appendChild(a);
-      div2.appendChild(divImg);
-      let divCtrls = document.createElement('div');
-      divCtrls.setAttribute('class', 'controls');
-      let ju = jumper.cloneNode(true);
-      ju.addEventListener('click', function(){window.open(this.images[i].img)}.bind(this));
-      divCtrls.appendChild(ju);
-      let ro = rotator.cloneNode(true);
-      ro.addEventListener('click', function(){this.rotateImage('facsImg_' + i);}.bind(this));
-      divCtrls.appendChild(ro);
-      let ra = rightArrow.cloneNode(true);
-      ra.setAttribute('href', '#' + nextName);
-      divCtrls.appendChild(ra);
-      let p = plus.cloneNode(true);
-      p.addEventListener('click', function(){this.scaleImage('facsImg_' + i, true);}.bind(this));
-      divCtrls.appendChild(p);
-      let m = minus.cloneNode(true);
-      m.addEventListener('click', function(){this.scaleImage('facsImg_' + i, false);}.bind(this));
-      divCtrls.appendChild(m);
-      div2.appendChild(divCtrls);
-      div.appendChild(div2);
-      this.displayEl.appendChild(div);
-    }
-    body.removeChild(closer);
-    body.removeChild(leftArrow);
-    body.removeChild(rightArrow);
-    body.removeChild(rotator);
-    body.removeChild(jumper);
-    body.removeChild(plus);
-    body.removeChild(minus);
-    //If there's a hash in the URL, select it.
-    if (targId.length > 1){
+
+      //Now reset the location hash to highlight the target image.
       document.location.hash = '';
-      setTimeout(function(){document.location.hash = '#' + targId;}, 200);
+      document.location.hash = '#' + targId;
+      //setTimeout(function(){document.location.hash = '#' + targId;}, 200);
+
+      //Now render the next block of images: endWith to the end.
+      for (let i = endWith+1; i&lt;this.images.length; i++){
+        let div = this.createImageBlock(i);
+        this.displayEl.appendChild(div);
+        this.images[i].inserted = true;
+      }
+
+      //Now render the first batch up to startFrom.
+      for (let i=startFrom-1; i>=0; i--){
+        let div = this.createImageBlock(i);
+        this.displayEl.insertBefore(div, this.displayEl.firstChild);
+        this.images[i].inserted = true;
+      }
     }
+    //Otherwise we just render them all in order.
+    else{
+      for (let i=0; i&lt;this.images.length; i++){
+        let div = this.createImageBlock(i);
+        this.displayEl.appendChild(div);
+        this.images[i].inserted = true;
+      }
+    }
+    
     //Finally, set the cursor back to regular.
     // eslint-disable-next-line no-unused-vars
     window.addEventListener('load', (event) => {
       console.log('Done...'); document.body.style.cursor = 'default';
     });
+  }
+
+  /**
+  * @function FacsViewer~getImageIndexById
+  * @description Function to retrieve the index of a specific
+  * image in the images array based on its id. Used to discover
+  * which specific image should be constructed first when processing
+  * large image collections.
+  * @param {string} imgId The id of the image.
+  * @returns {number} the index of the item in the array, or -1 if 
+  *                  there is no matching item.
+  */
+  getImageIndexById(imgId){
+    for (let i=0; i&lt;this.images.length; i++){
+      if (this.images[i].id === imgId){
+        return i;
+      }
+    }
+    return -1;
   }
 
   /**
@@ -618,13 +696,13 @@ class FacsViewer{
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FacsViewer.html">FacsViewer</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FacsViewer.html">FacsViewer</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-usingFacsViewer.html">usingFacsViewer</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue Apr 28 2020 16:24:46 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue May 05 2020 15:08:38 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

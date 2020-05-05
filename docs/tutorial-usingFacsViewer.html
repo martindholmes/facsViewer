@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Tutorial: usingFacsViewer</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Tutorial: usingFacsViewer</h1>
+
+    <section>
+
+<header>
+    
+
+    <h2>usingFacsViewer</h2>
+</header>
+
+<article>
+    <h1>Using FacsViewer</h1>
+<p>This is a brief tutorial showing how to use the FacsViewer class.</p>
+<h2>1. What it can do</h2>
+<p>FacsViewer is a single-class JS application designed to create conveniently-browsable views of collections of images. It provides an initial thumbnail-sized array of images, and when the user clicks on one, that image is shown in a large view where it can be rotated and zoomed; the large view also allows navigation forward and backward in the sequence.</p>
+<h2>2. How to use it</h2>
+<p>First of all, you will need to include both the JS file and the CSS file in your page in the normal way:</p>
+<pre class="prettyprint source"><code>&lt;link rel=&quot;stylesheet&quot; href=&quot;css/FacsViewer.css&quot; type=&quot;text/css&quot;/>
+&lt;script src=&quot;js/FacsViewer.js&quot;>&lt;/script>
+</code></pre>
+<p>Then you will need to create an instance of the class, and configure it to display your images. There are two simple approaches to providing a list of images for the class to use:</p>
+<h3>2.1. Supplying a folder path</h3>
+<p>If the web server on which the images reside is set up to allow directory browsing for the directory containing the images, then you can just provide the URL of the directory to the class:</p>
+<pre class="prettyprint source"><code>var facsViewer = null;
+  
+function setupFacsViewer(){
+  facsViewer = new FacsViewer({folder: 'https://www.example.org/images/'});
+}
+  
+window.addEventListener('load', setupFacsViewer);
+</code></pre>
+<h3>2.2. Providing a JSON image listing</h3>
+<p>If your server cannot be set up to allow image browsing, or you need to have more control over what images are included, you can supply FacsViewer with a JSON file containing a list of images:</p>
+<pre class="prettyprint source"><code>var facsViewer = null;
+  
+function setupFacsViewer(){
+  facsViewer = new FacsViewer({});
+  facsViewer.loadJSON('path/to/json/file/json');  
+}
+  
+window.addEventListener('load', setupFacsViewer);
+</code></pre>
+<p>The basic format of the JSON file is as follows:</p>
+<pre class="prettyprint source"><code>{ &quot;folder&quot; : &quot;https://www.example.org\/images&quot;,
+    &quot;images&quot; : 
+    [ 
+      { &quot;img&quot; : &quot;img1.jpg&quot; },
+      
+      { &quot;img&quot; : &quot;img2.jpg&quot; }
+    ]
+}    
+</code></pre>
+<h2>3. Additional useful features</h2>
+<h3>3.1 Folder browsing</h3>
+<p>If you are using the directory-browsing method of configuring the class, you should also be able to browse the folder structure on the server (limited of course to folders which have directory browsing turned on). If you wish to turn this behaviour off, you can set the <code>showExtraInfo</code> property to false:</p>
+<pre class="prettyprint source"><code>facsViewer = new FacsViewer({folder: 'https://www.example.org/images/',
+                        showExtraInfo = false});
+</code></pre>
+<h3>3.2 Adding links for images</h3>
+<p>It may be useful for some or all of your images to be accompanied by links to external resources; for example, if your images are the pages of a historical manuscript, you might link each page to a specific point in a published transcription. This can only be done using the JSON method of configuring the class, and it requires two pieces of information. First, you need to include the link URL (absolute, or relative to the page hosting the image collection) for each image which has an associated resource:</p>
+<pre class="prettyprint source"><code>{ &quot;folder&quot; : &quot;https://www.example.org\/images&quot;,
+    &quot;images&quot; : 
+    [ 
+      { &quot;img&quot; : &quot;img1.jpg&quot;,
+        &quot;link&quot;: &quot;doc.html#page1&quot; },
+      
+      { &quot;img&quot; : &quot;img2.jpg&quot;,
+        &quot;link&quot;: &quot;doc.html#page2&quot; }
+    ]
+}    
+</code></pre>
+<p>Secondly, you need to provide a string which will be used to make the link text for the image:</p>
+<pre class="prettyprint source"><code>facsViewer = new FacsViewer({linkText: 'Transcription'});
+</code></pre>
+<h3>3.3 Providing a thumbnail option</h3>
+<p>Large collections of large images can take a long time to render on the page, so if you have thumbnail versions of them, the responsiveness of the page can be improved. Rather than providing the path to a thumbnail for each image in a collection, it makes more sense to provide a single JavaScript function whose job is to convert the original image URL to its thumbnail equivalent (this of course requires that your files are named and organized in a methodical way). Here is an example:</p>
+<pre class="prettyprint source"><code>  facsViewer = new FacsViewer({linkText: &quot;Transcription&quot;});
+  facsViewer.funcFolderToThumbnail = function(folder){
+        return folder.replace(/full_size/, 'thumbnail');
+   };
+  facsViewer.loadJSON('path/to/json/file/json');  
+</code></pre>
+<p>This function would be passed the original image path, which might be <code>https://www.example.org/images/full_size/image1.jpg</code>, and it would return the equivalent thumbnail image: <code>https://www.example.org/images/thumbnail/image1.jpg</code>. Note: you need to set the <code>funcFolderToThumbnail</code> property prior to calling the <code>loadJSON</code> function, because the function needs to be available when the JSON is being processed.</p>
+<h3>3.4 Controlling where images are displayed</h3>
+<p>By default, FacsViewer will create two <code>div</code> elements in the host page to display its content, one with <code>id=&quot;infoDisplay&quot;</code>, which is used to display extra information such as folders in the folder tree, and one with <code>id=&quot;facsViewer&quot;</code>, which is where the images are rendered. However, if such elements already exist in the page, it will use them rather than creating new ones. So you can control where the class will display its content in your page by creating those elements for yourself.</p>
+</article>
+
+</section>
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FacsViewer.html">FacsViewer</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-usingFacsViewer.html">usingFacsViewer</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue May 05 2020 15:08:38 GMT-0700 (PDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
