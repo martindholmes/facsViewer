@@ -261,8 +261,12 @@ class FacsViewer{
       let links = doc.getElementsByTagName('a');
       for (let i=0; i<links.length; i++){
         let href = links[i].getAttribute('href');
+        let id = href.replace(/[\s'",?!@#$%[\]{};:]+/g, '_');
         if (href.match(this.ptnImagePath)){
-          this.images.push({img: this.folder + href});
+          this.images.push({img: this.folder + href,
+            inserted: false,
+            id: id, 
+            name: href});
         }
         else{
           if (href.match(this.ptnFolderPath)){
