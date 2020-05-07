@@ -29,6 +29,14 @@ function setupFacsViewer(){
 window.addEventListener('load', setupFacsViewer);
 ```
 
+You can also supply the folder path in a URL parameter, like this:
+
+```
+https://www.example.org/facsViewer.html?folder=https://www.example.org/images
+```
+
+This has the advantage that users can bookmark and share URLs of specific images in the collection.
+
 ### 2.2. Providing a JSON image listing
 
 If your server cannot be set up to allow image browsing, or you need to have more control over what images are included, you can supply FacsViewer with a JSON file containing a list of images:
