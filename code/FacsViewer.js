@@ -113,7 +113,7 @@ class FacsViewer{
       this.searchParams = new URLSearchParams(decodeURI(document.location.search));
 
       //Folder URL to get stuff from. There are three ways to set this:
-      //through a URL paramete,r through an options parameter, or through
+      //through a URL parameter, through an options parameter, or through
       //a call to setFolder after construction.
       let tmpFolder = this.searchParams.get('folder') || options.folder || '';
       if (tmpFolder !== ''){
@@ -155,9 +155,15 @@ class FacsViewer{
   * @param {string} folder The URL of the folder.
   */
   setFolder(folder){
+    window.location.hash = '';
     //Make sure there's a final slash.
-    this.folder = folder.replace(/\/$/, '') + '/';
+    let newFolder = folder.replace(/\/$/, '') + '/';
+    this.folder = newFolder;
     this.getListing();
+    //Check for a target image in the URL params.
+    if (this.searchParams.get('image')){
+      window.location.hash = '#' + this.searchParams.get('image');
+    }
   }
   /**
   * @function FacsViewer~loadJSON
@@ -495,8 +501,6 @@ class FacsViewer{
     //Now let's work out the optimal place to start from
     //in our sequence, and how best to proceed through it.
     let targIndex = (targId.length > 0)? this.getImageIndexById(targId): -1;
-
-    console.log('targId = ' + targId + ', targIndex = ' + targIndex);
 
     //If there is a target image, we process in batches.
     if (targIndex > -1){
