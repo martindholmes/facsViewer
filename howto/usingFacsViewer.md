@@ -113,6 +113,18 @@ This function would be passed the original image path, which might be `https://w
 ### 3.4 Controlling where images are displayed
 By default, FacsViewer will create two `div` elements in the host page to display its content, one with `id="infoDisplay"`, which is used to display extra information such as folders in the folder tree, and one with `id="facsViewer"`, which is where the images are rendered. However, if such elements already exist in the page, it will use them rather than creating new ones. So you can control where the class will display its content in your page by creating those elements for yourself.
 
+### 3.5 Targeting a specific image
+If you want the page to open with one particular image selected initially, you can do it in two ways. You can set the hash in the page URL to the filename of the image:
+
+```
+https://www.example.com/facsViewer.html#image27.jpg
+```
+or you can provide a URL parameter "image":
+
+```
+https://www.example.com/facsViewer.html?image=image27.jpg
+```
+NOTE: This assumes that the image filenames are sensible—in other words, that they contain no spaces or other characters that are problematic in URLs and identifiers. Non-sensible filenames are transformed to fix them before their use as ids, so if you're stuck with a collection of bad filenames, you'll have to figure out the transformed id of the image you need to point to.
 
 
 
