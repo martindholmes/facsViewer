@@ -136,6 +136,17 @@ https://www.example.com/facsViewer.html?image=image27.jpg
 ```
 NOTE: This assumes that the image filenames are sensible—in other words, that they contain no spaces or other characters that are problematic in URLs and identifiers. Non-sensible filenames are transformed to fix them before their use as ids, so if you're stuck with a collection of bad filenames, you'll have to figure out the transformed id of the image you need to point to.
 
+### 3.6 Customizing the image template
+The block of code which contains an image and its controls is constructed from a code template which is embedded in the JavaScript (see the method `FacsViewer~addImageTemplate`). This template is added to the page at runtime, and then each individual image block is created by cloning it. However, you can override this by adding your own version of the template, which the FacsViewer will use in preference if it is already present in the page. It needs to look like this:
+
+```
+<template id="imgTemplate">
+  <div id="str_imgId" class="facsViewerThumb">
+    [...]
+  </div>    
+</template>
+```
+Note that the FacsViewer is expecting to find a range of different components in the template, and if they are not there, an error may result, so start by copying the existing template and make your changes cautiously, testing as you go. If all you want to do is (for example) remove the buttons which allow zooming, it's much simpler to add your own CSS which hides them, rather than hacking the template. You should only need a custom template if you want to change the structure of the block for some reason, or add something which is not there.
 
 
 
