@@ -121,11 +121,16 @@ class FacsViewer{
         this.setFolder(tmpFolder);
       }
 
-      //Optional additional parameter for a function that can transform the
-      //main folder path into a path to a thumbnail instead. If this is
-      //supplied, then the object will create a <picture> element with
-      //multiple sources, allowing rapid loading of thumbnails.
+      //Optional additional parameters for functions that can transform the
+      //main folder path into a path to a thumbnail or a larger image instead. 
+      //If a thumbnail function is supplied, then the object will create a 
+      //<picture> element with multiple sources, allowing rapid loading of 
+      //thumbnails.
       this.funcFolderToThumbnail = options.funcFolderToThumbnail || null;
+
+      //If the large function is supplied, the link to view the image in 
+      //another window/tab will point to that one instead.
+      this.funcFolderToLarge = options.funcFolderToLarge || null;
 
     }
     catch(e){
@@ -403,6 +408,16 @@ class FacsViewer{
     }
 
     //Now the controls on the right: they need event listeners.
+    //If we have a function giving us a path to the large image, use it.
+    if (this.funcFolderToLarge == null){
+      div.querySelector('a[data-id="view"]').addEventListener('click', 
+                      function(){window.open(this.images[i].img)}.bind(this));
+    }
+    else{
+      let large = this.funcFolderToLarge(this.images[i].img);
+      div.querySelector('a[data-id="view"]').addEventListener('click', 
+                      function(){window.open(large)}.bind(this));
+    }
     div.querySelector('a[data-id="view"]').addEventListener('click', 
                       function(){window.open(this.images[i].img)}.bind(this));
     div.querySelector('a[data-id="rotate"]').addEventListener('click', 
