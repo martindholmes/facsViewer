@@ -485,8 +485,6 @@ class FacsViewer{
       div.querySelector('a[data-id="view"]').addEventListener('click', 
                       function(){window.open(large)}.bind(this));
     }
-    div.querySelector('a[data-id="view"]').addEventListener('click', 
-                      function(){window.open(this.images[i].img)}.bind(this));
     div.querySelector('a[data-id="rotate"]').addEventListener('click', 
                       function(){this.rotateImage(`facsImg_${i}`);}.bind(this));
     div.querySelector('a[data-id="enlarge"]').addEventListener('click', 
