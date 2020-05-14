@@ -67,6 +67,489 @@ the fly, causing the object to display a different set of images.
 
 
 
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ptnImagePath</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">RegExp</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A match pattern to confirm that 
+                         filepaths point to images.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ptnFolderPath</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">RegExp</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A match pattern for subfolder paths.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>images</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Object></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An array for images to display. Each 
+                         array item is actually an object with img 
+                         and link properties, so that if required, 
+                         each image can have a link to an exernal 
+                         location.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>imagesLoaded</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A counter to track how many of the 
+                         images in the list have been successfully 
+                         loaded.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>targetCircleRadius</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A setting controlling how many
+                          images before and after a target image will
+                          be constructed as a priority, to speed up
+                          response for the user, before the rest of
+                          the page is filled in.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>progessDiv</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLDivElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A pointer to the div which will
+                          be constructed to display image load progress.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>progress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLProgressElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A pointer to a progress element 
+                          which will be constructed to show progress in
+                          image loading.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>subfolders</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An array to hold a list of subfolders
+                          of the current folder, used when folder browsing
+                          is operative.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>parser</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">DomParser</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A DomParser object used to parse the folder 
+                          listing retrieved from a web server.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>showExtraInfo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A boolean which controls whether folder
+                          browsing is allowed when using listings retrieved
+                          from a server.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>linkText</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The text used to make a clickable link when a 
+                          JSON image list provides a link for an image.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>scaleFactor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The increment by which the zoom in/out buttons
+                          will change the image size.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>infoEl</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLDivElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A pointer to a div which will be found or
+                          constructed to display the additional folder browsing
+                          information if showExtraInfo is true and the folder 
+                          structure info is available.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>displayEl</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLDivElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A pointer to a div which will be found or
+                          constructed to display the images themselves.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>templateEl</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLTemplateElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A pointer to a template element which
+                          will be found or constructed; this contains the template
+                          for the block used to display each image.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>initialTargId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of a specific image which should be shown
+                          on load. This image will be prioritized for download 
+                          along with a few images before and after it (the 
+                          number of those images is controlled by the 
+                          targetCircleRadius property).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>funcFolderToThumbnail</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A function that can be used to 
+                          transform the path to a folder containing a regular 
+                          sized image into one which contains an equivalent 
+                          thumbnail. Providing this should enable faster display
+                          of the gallery as it is created.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>funcFolderToLarge</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A function that can be used to 
+                          transform the path to a folder containing a regular 
+                          sized image into one which contains an equivalent 
+                          large-sized image. This larger version will be the one
+                          pointed to by the link which opens the image in a 
+                          separate window.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
 <dl class="details">
 
     
@@ -207,7 +690,7 @@ the fly, causing the object to display a different set of images.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line286">line 286</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line358">line 358</a>
     </li></ul></dd>
     
 
@@ -346,7 +829,7 @@ the fly, causing the object to display a different set of images.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line336">line 336</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line408">line 408</a>
     </li></ul></dd>
     
 
@@ -510,7 +993,7 @@ large image collections.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line553">line 553</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line635">line 635</a>
     </li></ul></dd>
     
 
@@ -623,7 +1106,7 @@ viewer.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line230">line 230</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line302">line 302</a>
     </li></ul></dd>
     
 
@@ -712,7 +1195,7 @@ viewer.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line136">line 136</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line208">line 208</a>
     </li></ul></dd>
     
 
@@ -850,7 +1333,7 @@ parse its properties and show the results.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line168">line 168</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line240">line 240</a>
     </li></ul></dd>
     
 
@@ -991,7 +1474,7 @@ server. We treat it as text because it's unlikely to be well-formed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line254">line 254</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line326">line 326</a>
     </li></ul></dd>
     
 
@@ -1128,7 +1611,7 @@ server. We treat it as text because it's unlikely to be well-formed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line180">line 180</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line252">line 252</a>
     </li></ul></dd>
     
 
@@ -1270,7 +1753,7 @@ subset of images around that target first, before filling in the others.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line421">line 421</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line503">line 503</a>
     </li></ul></dd>
     
 
@@ -1407,7 +1890,7 @@ subset of images around that target first, before filling in the others.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line656">line 656</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line738">line 738</a>
     </li></ul></dd>
     
 
@@ -1545,7 +2028,7 @@ and left are onscreen, making the whole image available for scrolling.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line623">line 623</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line705">line 705</a>
     </li></ul></dd>
     
 
@@ -1683,7 +2166,7 @@ to its default.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line641">line 641</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line723">line 723</a>
     </li></ul></dd>
     
 
@@ -1822,7 +2305,7 @@ current value of the transform property, parses out the rotation bit
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line572">line 572</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line654">line 654</a>
     </li></ul></dd>
     
 
@@ -1984,7 +2467,7 @@ property, then changes it appropriately.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line596">line 596</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line678">line 678</a>
     </li></ul></dd>
     
 
@@ -2122,7 +2605,2200 @@ retrieving listings from the server and displaying them.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line151">line 151</a>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line223">line 223</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>FacsViewer<span class="signature">(options)</span><span class="type-signature"></span></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    
+    <h4 class="name" id="FacsViewer"><span class="type-signature"></span>new FacsViewer<span class="signature">(options)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    The constructor has only one optional parameter, which
+is an object that may provide settings for any of a range of properties.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An optional parameter that can be used to set
+any of a range of the object properties, using for example:
+showExtraInfo = true.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line110">line 110</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~addImageTemplate"><span class="type-signature">(inner) </span>addImageTemplate<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    This function adds an HTML template element to the 
+             document (if one has not already been supplied) which
+             can then be used to construct image containers as 
+             needed.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line358">line 358</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~createImageBlock"><span class="type-signature">(inner) </span>createImageBlock<span class="signature">(i)</span><span class="type-signature"> &rarr; {HTMLDivElement}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    This creates and returns a div element configured
+             for a specific image in the listing, based on the
+             template which has been created above.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>i</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the number of the image in the images array,</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line408">line 408</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    an HTML div element which has not yet
+                been inserted into the document. The calling
+                function will decide where to insert it.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">HTMLDivElement</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~getImageIndexById"><span class="type-signature">(inner) </span>getImageIndexById<span class="signature">(imgId)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Function to retrieve the index of a specific
+image in the images array based on its id. Used to discover
+which specific image should be constructed first when processing
+large image collections.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>imgId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of the image.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line635">line 635</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the index of the item in the array, or -1 if 
+                 there is no matching item.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~getListing"><span class="type-signature">(inner) </span>getListing<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    This uses fetch to retrieve a listing from the server at the
+specified URL in this.folder, and then calls render() to build the
+viewer.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line302">line 302</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~imageLoaded"><span class="type-signature">(inner) </span>imageLoaded<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Called by each individual image when its content
+             has loaded, so that overall loading can be tracked.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line208">line 208</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~loadJSON"><span class="type-signature">(inner) </span>loadJSON<span class="signature">(uri)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Retrieves a JSON string from a URL, then calls readJSON to
+parse its properties and show the results.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>uri</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">URI</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The URI from which to retrieve the string.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line240">line 240</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~parseListing"><span class="type-signature">(inner) </span>parseListing<span class="signature">(listing)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    This processes the listing to create an array of image
+URLs for display. It needs to be robust against various configurations
+of listings page HTML. It then calls the render function to display
+the results.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>listing</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">a string version of the page returned by the
+server. We treat it as text because it's unlikely to be well-formed.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line326">line 326</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~readJSON"><span class="type-signature">(inner) </span>readJSON<span class="signature">(strJSON)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Loads image and subfolder information from a JSON string.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>strJSON</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The unparsed JSON string.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line252">line 252</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~render"><span class="type-signature">(inner) </span>render<span class="signature">(targId)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    This is the meat of the viewer. It processes a server index
+listing or a JSON-configured listing to render a facsimile viewer on the page.
+If a specific image is the target (with a location hash), then it renders a
+subset of images around that target first, before filling in the others.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>targId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">a target id to display after the images have been 
+                           inserted. Defaults to the class's targId property,
+                           which is set on load from the location hash.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line503">line 503</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~reportError"><span class="type-signature">(inner) </span>reportError<span class="signature">(msg)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Simple error reporting mechanism for informing the user.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The error message to report.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line738">line 738</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~repositionImage"><span class="type-signature">(inner) </span>repositionImage<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Function to move an image container so that its top
+and left are onscreen, making the whole image available for scrolling.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of the div containing the image.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line705">line 705</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~resetImage"><span class="type-signature">(inner) </span>resetImage<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Function to reset the size and orientation of an image
+to its default.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of the div containing the image.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line723">line 723</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~rotateImage"><span class="type-signature">(inner) </span>rotateImage<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Function to rotate an image by 90 degrees. This reads the
+current value of the transform property, parses out the rotation bit
+(if it's there), increments it and puts it back.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of the div containing the image.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line654">line 654</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~scaleImage"><span class="type-signature">(inner) </span>scaleImage<span class="signature">(divId, enlarge)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Function to scale an image by a positive or negative .02.
+This parses out the current value of the scale factor from the transform
+property, then changes it appropriately.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of the div containing the image.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>enlarge</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Boolean value to specify whether to enlarge or shrink.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line678">line 678</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~setFolder"><span class="type-signature">(inner) </span>setFolder<span class="signature">(folder)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Sets the folder to browse, and kicks off the process of
+retrieving listings from the server and displaying them.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>folder</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The URL of the folder.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="FacsViewer.js.html">FacsViewer.js</a>, <a href="FacsViewer.js.html#line223">line 223</a>
     </li></ul></dd>
     
 
@@ -2174,7 +4850,7 @@ retrieving listings from the server and displaying them.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 07 2020 10:22:31 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Thu May 14 2020 07:58:03 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

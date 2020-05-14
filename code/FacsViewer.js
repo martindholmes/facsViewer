@@ -36,14 +36,81 @@
   * which is the URI of the folder whose image list it will retrieve,
   * and whose images it will display. That property can also be set on
   * the fly, causing the object to display a different set of images.
-  *
+  * @property {RegExp} ptnImagePath A match pattern to confirm that 
+  *                          filepaths point to images.
+  * @property {RegExp} ptnFolderPath A match pattern for subfolder paths.
+  * @property {Array<Object>}  images An array for images to display. Each 
+  *                          array item is actually an object with img 
+  *                          and link properties, so that if required, 
+  *                          each image can have a link to an exernal 
+  *                          location.
+  * @property {number} imagesLoaded A counter to track how many of the 
+  *                          images in the list have been successfully 
+  *                          loaded.
+  * @property {number} targetCircleRadius A setting controlling how many
+  *                           images before and after a target image will
+  *                           be constructed as a priority, to speed up
+  *                           response for the user, before the rest of
+  *                           the page is filled in.
+  * @property {HTMLDivElement} progessDiv A pointer to the div which will
+  *                           be constructed to display image load progress.
+  * @property {HTMLProgressElement} progress A pointer to a progress element 
+  *                           which will be constructed to show progress in
+  *                           image loading.
+  * @property {Array<string>} subfolders An array to hold a list of subfolders
+  *                           of the current folder, used when folder browsing
+  *                           is operative.
+  * @property {DomParser} parser A DomParser object used to parse the folder 
+  *                           listing retrieved from a web server.
+  * @property {Boolean} showExtraInfo A boolean which controls whether folder
+  *                           browsing is allowed when using listings retrieved
+  *                           from a server.
+  * @property {string} linkText The text used to make a clickable link when a 
+  *                           JSON image list provides a link for an image.
+  * @property {number} scaleFactor The increment by which the zoom in/out buttons
+  *                           will change the image size.
+  * @property {HTMLDivElement} infoEl A pointer to a div which will be found or
+  *                           constructed to display the additional folder browsing
+  *                           information if showExtraInfo is true and the folder 
+  *                           structure info is available.
+  * @property {HTMLDivElement} displayEl A pointer to a div which will be found or
+  *                           constructed to display the images themselves.
+  * @property {HTMLTemplateElement} templateEl A pointer to a template element which
+  *                           will be found or constructed; this contains the template
+  *                           for the block used to display each image.
+  * @property {string} initialTargId The id of a specific image which should be shown
+  *                           on load. This image will be prioritized for download 
+  *                           along with a few images before and after it (the 
+  *                           number of those images is controlled by the 
+  *                           targetCircleRadius property).
+  * @property {function} funcFolderToThumbnail A function that can be used to 
+  *                           transform the path to a folder containing a regular 
+  *                           sized image into one which contains an equivalent 
+  *                           thumbnail. Providing this should enable faster display
+  *                           of the gallery as it is created.                 
+    * @property {function} funcFolderToLarge A function that can be used to 
+  *                           transform the path to a folder containing a regular 
+  *                           sized image into one which contains an equivalent 
+  *                           large-sized image. This larger version will be the one
+  *                           pointed to by the link which opens the image in a 
+  *                           separate window.                              
   */
 //ESLint seems to treat a class declaration as an unused variable. :-(
 // eslint-disable-next-line no-unused-vars
 class FacsViewer{
+  /**
+  * @constructor
+  * @description The constructor has only one optional parameter, which
+  * is an object that may provide settings for any of a range of properties.
+  * @param {object} options An optional parameter that can be used to set
+  * any of a range of the object properties, using for example:
+  * showExtraInfo = true.
+  */
+
   constructor(options = {}){
     try {
-      //Some constants to make things easier to read.
+      //Some constants to make things easier to read. NOTE: THESE ARE
+      //NOT CURRENTLY USED. If batch display is implemented, they may be.
       this.FORWARD  = 0;
       this.BACKWARD = 1;
 

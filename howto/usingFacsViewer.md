@@ -96,19 +96,29 @@ Secondly, you need to provide a string which will be used to make the link text 
 ```
 facsViewer = new FacsViewer({linkText: 'Transcription'});
 ```
-### 3.3 Providing a thumbnail option
+### 3.3 Providing options for image sizes
 
 Large collections of large images can take a long time to render on the page, so if you have thumbnail versions of them, the responsiveness of the page can be improved. Rather than providing the path to a thumbnail for each image in a collection, it makes more sense to provide a single JavaScript function whose job is to convert the original image URL to its thumbnail equivalent (this of course requires that your files are named and organized in a methodical way). Here is an example:
 
 ```
   facsViewer = new FacsViewer({linkText: "Transcription"});
   facsViewer.funcFolderToThumbnail = function(folder){
-        return folder.replace(/full_size/, 'thumbnail');
+        return folder.replace(/normal/, 'thumbnail');
    };
   facsViewer.loadJSON('path/to/json/file/json');  
 ```
 
 This function would be passed the original image path, which might be `https://www.example.org/images/full_size/image1.jpg`, and it would return the equivalent thumbnail image: `https://www.example.org/images/thumbnail/image1.jpg`. Note: you need to set the `funcFolderToThumbnail` property prior to calling the `loadJSON` function, because the function needs to be available when the JSON is being processed.
+
+Conversely, sometimes the full-size images are much to large to function effectively in the browsing mode, so you may use medium-size versions for the main page. In this case, you can supply another function to the FacsViewer to convert the folder path, like this:
+
+```
+  facsViewer.funcFolderToLarge = function(folder){
+        return folder.replace(/normal/, 'large');
+   };
+```
+
+This will be used when creating the link to display the image in another window or tab, so that a user can easily get access to the full-size image if they need to.
 
 ### 3.4 Controlling where images are displayed
 By default, FacsViewer will create two `div` elements in the host page to display its content, one with `id="infoDisplay"`, which is used to display extra information such as folders in the folder tree, and one with `id="facsViewer"`, which is where the images are rendered. However, if such elements already exist in the page, it will use them rather than creating new ones. So you can control where the class will display its content in your page by creating those elements for yourself.
