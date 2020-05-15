@@ -97,34 +97,8 @@ div.facsViewerThumb img{
   margin-top: 0.25em;
 }
 
-/* Now to show things... */
-div.facsViewerThumb:target{
-  height: 96vh;
-  width: 96vw;
-  position: absolute;
-  top: 2vh;
-  left: 2vw;
-  z-index: 1000;
-}
-
-div.facsViewerThumb:target div.imgContainer{
-  min-height: 90vh;
-}
-
 div.facsViewerThumb > div > div{
   background-color: #ffffff;
-}
-
-div.facsViewerThumb:target > div > div{
-  padding: 0.5rem;
-}
-
-div.facsViewerThumb:target div.controls{
-  z-index: 2000;
-}
-
-div.facsViewerThumb:target div.closer{
-  display: flex;
 }
 
 div.facsViewerThumb div.imgContainer{
@@ -135,7 +109,33 @@ div.facsViewerThumb div.imgContainer{
   flex-grow: 3;
 }
 
-div.facsViewerThumb:target img{
+/* When an image item is the selected one: */
+div.facsViewerThumb:target, div.facsViewerThumb.fvSelected{
+  height: 96vh;
+  width: 96vw;
+  position: absolute;
+  top: 2vh;
+  left: 2vw;
+  z-index: 1000;
+}
+
+div.facsViewerThumb:target div.imgContainer, div.facsViewerThumb.fvSelected div.imgContainer{
+  min-height: 90vh;
+}
+
+div.facsViewerThumb:target > div > div, div.facsViewerThumb.fvSelected > div > div{
+  padding: 0.5rem;
+}
+
+div.facsViewerThumb:target div.controls, div.facsViewerThumb.fvSelected div.controls{
+  z-index: 2000;
+}
+
+div.facsViewerThumb:target div.closer, div.facsViewerThumb.fvSelected div.closer{
+  display: flex;
+}
+
+div.facsViewerThumb:target img, div.facsViewerThumb.fvSelected img{
   width: auto;
   max-width: 90vw;
   max-height: 90vh;
@@ -145,10 +145,16 @@ div.facsViewerThumb:target img{
   transition-duration: 0.2s;
 }
 
-div.facsViewerThumb:target a.arrow{
+div.facsViewerThumb:target a.arrow, div.facsViewerThumb.fvSelected a.arrow{
   display: block;
 }
 
+/* When an image item was the last selected but is unselected (closed). */
+div.facsViewerThumb.fvDeselected{
+  border: double 5pt red;
+}
+
+/* Progress bar for image loading. */
 div#facsViewerProgressDiv{
   background-color: white;
   border: solid 1pt black;
