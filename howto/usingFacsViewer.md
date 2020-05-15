@@ -37,9 +37,17 @@ https://www.example.org/facsViewer.html?folder=https://www.example.org/images
 
 This has the advantage that users can bookmark and share URLs of specific images in the collection.
 
+Finally, you can set the folder manually after instantiating the FacsViewer:
+
+```
+facsViewer = new FacsViewer({});
+facsViewer.setFolder('https://www.example.org/images/');
+
+```
+
 ### 2.2. Providing a JSON image listing
 
-If your server cannot be set up to allow image browsing, or you need to have more control over what images are included, you can supply FacsViewer with a JSON file containing a list of images:
+Perhaps your server cannot be set up to allow image browsing, or you would like to have more control over what images are included and what extra features are available in the interface. In this case, you can supply FacsViewer with a JSON file containing a list of images:
 
 ```
 var facsViewer = null;
@@ -63,7 +71,14 @@ The basic format of the JSON file is as follows:
       { "img" : "img2.jpg" }
     ]
 }    
-```    
+```   
+
+If you would prefer to instantiate your own JavaScript object in your own code, and then just pass this to the FacsViewer, you can do it like this:
+
+```
+facsViewer.readJSON(JSON.stringify(myObject));
+```
+
 ## 3. Additional useful features
 
 ### 3.1 Folder browsing
