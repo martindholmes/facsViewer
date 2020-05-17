@@ -2,6 +2,20 @@
 /*           Author: Martin Holmes.            */
 /*           University of Victoria.           */
 
+/** 
+ * @license MPL-2.0
+ * martindholmes/facsViewer is licensed under the
+ *  Mozilla Public License 2.0.
+ * Permissions of this weak copyleft license are conditioned 
+ * on making available source code of licensed files and 
+ * modifications of those files under the same license (or 
+ * in certain cases, one of the GNU licenses). Copyright and 
+ * license notices must be preserved. Contributors provide an 
+ * express grant of patent rights. However, a larger work using 
+ * the licensed work may be distributed under different terms 
+ * and without source code for files added in the larger work.
+ */
+
 /** This file originated as part of the Digital Victorian
   * Periodical Poetry project, but is now used in several
   * projects at the University of Victoria's Humanities
@@ -19,7 +33,9 @@
   * the images), and the server must also have Options
   * +Indexes turned on. It can also be configured with 
   * a JSON file listing for situations in which a server
-  * cannot be configured to list directory contents.
+  * cannot be configured to list directory contents. In
+  * this scenario, a much richer range of options is 
+  * available.
   */
 
  /** WARNING:
@@ -189,6 +205,10 @@ class FacsViewer{
       //Parse out the URLSearchParams
       this.searchParams = new URLSearchParams(decodeURI(document.location.search));
 
+      //This allows the user to navigate through selected images using the back and
+      //forward buttons.
+      window.onpopstate = function(){this.popState()}.bind(this);
+
       //Folder URL to get stuff from. There are three ways to set this:
       //through a URL parameter, through an options parameter, or through
       //a call to setFolder after construction.
@@ -237,14 +257,13 @@ class FacsViewer{
   * @param {string} folder The URL of the folder.
   */
   setFolder(folder){
-    window.location.hash = '';
     //Make sure there's a final slash.
     let newFolder = folder.replace(/\/$/, '') + '/';
     this.folder = newFolder;
     this.getListing();
     //Check for a target image in the URL params.
     if (this.searchParams.get('image')){
-      window.location.hash = '#' + this.searchParams.get('image');
+      this.setSelected(this.searchParams.get('image'), false);
     }
   }
   /**
@@ -460,10 +479,10 @@ class FacsViewer{
 
     //Set some ids and click events.
     div.querySelector('a[data-title="close"]').addEventListener('click', function(){this.setDeselected(id);}.bind(self));
-    div.querySelector('a[data-title="prev"]').addEventListener('click', function(){this.setSelected(lastId);}.bind(self));
+    div.querySelector('a[data-title="prev"]').addEventListener('click', function(){this.setSelected(lastId, false);}.bind(self));
     div.querySelector('div.imgContainer').setAttribute('id', 'facsImg_' + i.toString());
-    div.querySelector('a[data-title="next"]').addEventListener('click', function(){this.setSelected(nextId);}.bind(self));
-    div.querySelector('a[data-title="me"]').addEventListener('click', function(){this.setSelected(id);}.bind(self));
+    div.querySelector('a[data-title="next"]').addEventListener('click', function(){this.setSelected(nextId, false);}.bind(self));
+    div.querySelector('a[data-title="me"]').addEventListener('click', function(){this.setSelected(id, false);}.bind(self));
 
     //Now handle the actual image. Whether there's a thumbnail or not, we'll
     //provide a regular img tag.
@@ -506,8 +525,6 @@ class FacsViewer{
 
     //Return what we built.
     return div;
-                  
-
   }
 
   /**
@@ -522,7 +539,7 @@ class FacsViewer{
   */
   render(targId = this.initialTargId){
     //This takes a long while. Set a progress cursor.
-    window.setTimeout(function(){console.log('Rendering...'); document.body.style.cursor = 'progress';}, 10);
+    window.setTimeout(function(){document.body.style.cursor = 'progress';}, 10);
 
     //Add a template element for images to the document if it's 
     //not there already.
@@ -560,8 +577,8 @@ class FacsViewer{
       document.body.appendChild(preload);
     }
 
-    //Delete any existing content if we're starting fresh.
- 
+    //Delete any existing content; we're starting fresh.
+    //TODO: This should also be handled using a template.
     this.displayEl.innerHTML = '';
     if (this.showExtraInfo){
       this.infoEl.innerHTML = '';
@@ -598,7 +615,6 @@ class FacsViewer{
     if (targIndex > -1){
       let startFrom = Math.max(targIndex - this.targetCircleRadius, 0);
       let endWith   = Math.min(targIndex + this.targetCircleRadius, this.images.length-1);
-      console.log('startFrom: ' + startFrom + ', endWith: ' + endWith);
 
       //Render the first block of images.
       for (let i=startFrom; i<=endWith; i++){
@@ -607,10 +623,9 @@ class FacsViewer{
         this.images[i].inserted = true;
       }
 
-      //Now reset the location hash to highlight the target image.
-      document.location.hash = '';
-      document.location.hash = '#' + targId;
-      //setTimeout(function(){document.location.hash = '#' + targId;}, 200);
+      //Now highlight the target image. Add this to the history, 
+      //since we may be arriving at this target id through a param.
+      this.setSelected(targId, false);
 
       //Now render the next block of images: endWith to the end.
       for (let i = endWith+1; i<this.images.length; i++){
@@ -648,13 +663,14 @@ class FacsViewer{
    * large-size display. Also deselects any previous item. The 
    * main action is setting classes on the items.
    * @param {string} imgId The id of the item to be selected. 
+   * @param {boolean} popping When this function is called as a
+   *                      result of a History pop event, we don't
+   *                      need to push anything to the History.
    */
-  setSelected(imgId){
-    console.log('Entered setSelected with id ' + imgId + '.');
+  setSelected(imgId, popping = false){
     //First confirm the thing exists.
     let el = this.displayEl.querySelector(`div[id="${imgId}"]`);
     if (el !== null){
-      console.log('Found the item to select.');
       //Now deselect any prior item.
       if (this.currItem != ''){
         let prevEl = this.displayEl.querySelector(`div[id="${this.currItem}"]`);
@@ -672,9 +688,19 @@ class FacsViewer{
         }
         this.closedItem = '';
       }
+      //Set the location hash for the History object, if we're not 
+      //doing this operation as a result of a history pop.
+      if (popping === false){
+        let url = window.location.href.split(/#/)[0] + '#' + imgId;
+        if (window.location.href !== url){
+          history.pushState({time: Date.now()}, '', url);
+        }
+      }
+
       //Finally, display our item.
       el.classList.add('fvSelected');
       this.currItem = imgId;
+      el.scrollIntoView({});
     }
   }
 
@@ -686,7 +712,6 @@ class FacsViewer{
    * @param {string} imgId The id of the item to be Deselected. 
    */
   setDeselected(imgId){
-    console.log('Entered setDeselected.');
     //First confirm the thing exists.
     let el = this.displayEl.querySelector(`div[id="${imgId}"]`);
     if (el !== null){
@@ -705,9 +730,22 @@ class FacsViewer{
       //Finally, deselect our item and make it the last closed item.
       el.classList.remove('fvSelected');
       el.classList.add('fvDeselected');
-      el.scrollIntoView({behavior: 'smooth', block: 'center'});
+      window.location.hash = '';
+      window.setTimeout(function(){el.scrollIntoView()}, 50);
       this.closedItem = imgId;
     }
+  }
+  /**
+   * @function FacsViewer~popState
+   * @description Function called by the window onpopstate event. If 
+   *           the target hash in the new URL is not the same as the
+   *           current item, make it the selected item.
+   */
+  popState(){
+    let imgId = window.location.hash.substring(1);
+    if (imgId !== this.currItem){
+      this.setSelected(imgId, true);
+    } 
   }
 
   /**
@@ -747,7 +785,7 @@ class FacsViewer{
         img.style.transform = tf.replace(/^(.*)rotate\((\d+)deg\)(.*)$/, '$1rotate(' + newRot + 'deg)$3');
       }
       else{
-        img.style.transform = tf + ' rotate(' + newRot + 'deg)';
+        img.style.transform = tf.replace('none', '') + ' rotate(' + newRot + 'deg)';
       }
       setTimeout(function(){this.repositionImage(divId);}.bind(this), 1);
     }
@@ -764,6 +802,7 @@ class FacsViewer{
   scaleImage(divId, enlarge){
     let div = document.getElementById(divId);
     if (div !== null){
+      //console.log('Scaling image with id ' + divId);
       let tf = div.style.transform;
       let strCurrScale = tf.replace(/^(.*)scale\(([\d.]+)\)(.*)$/, '$2');
       let currScale = (strCurrScale.match(/^[\d.]+$/))? parseFloat(strCurrScale): 1.0;
@@ -774,7 +813,7 @@ class FacsViewer{
         div.style.transform = tf.replace(/^(.*)scale\(([\d.]+)\)(.*)$/, '$1scale(' + newScale + ')$3');
       }
       else{
-        div.style.transform = tf + ' scale(' + newScale + ')';
+        div.style.transform = tf.replace('none', '') + ' scale(' + newScale + ')';
       }
       setTimeout(function(){this.repositionImage(divId);}.bind(this), 1);
     }
@@ -812,8 +851,6 @@ class FacsViewer{
     cont.style.transform = 'none';
     img.style.transform = 'none';
   }
-
-
 
   /**
   * @function FacsViewer~reportError

@@ -89,12 +89,14 @@ div.closer a:not(.arrow), div.closer a:not(.arrow):hover, div.closer a:not(.arro
   color: black;
   padding-right: 0.5em;
   padding-left: 0.5em;
+  cursor: pointer;
 }
 
 /* Let the image take up most of the box. */
 div.facsViewerThumb img{
   width: 5em;
   margin-top: 0.25em;
+  cursor: pointer;
 }
 
 div.facsViewerThumb > div > div{
@@ -110,13 +112,14 @@ div.facsViewerThumb div.imgContainer{
 }
 
 /* When an image item is the selected one: */
-div.facsViewerThumb:target, div.facsViewerThumb.fvSelected{
+div.facsViewerThumb:target,  div.facsViewerThumb.fvSelected{
   height: 96vh;
   width: 96vw;
   position: absolute;
   top: 2vh;
   left: 2vw;
   z-index: 1000;
+  cursor: default;
 }
 
 div.facsViewerThumb:target div.imgContainer, div.facsViewerThumb.fvSelected div.imgContainer{
