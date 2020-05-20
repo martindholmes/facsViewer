@@ -130,9 +130,9 @@ div.facsViewerThumb:target div.imgContainer, div.facsViewerThumb.fvSelected div.
   min-height: 90vh;
 }
 
-div.facsViewerThumb:target > div > div, div.facsViewerThumb.fvSelected > div > div{
+/* div.facsViewerThumb:target > div > div, div.facsViewerThumb.fvSelected > div > div{
   padding: 0.5rem;
-}
+}*/
 
 div.facsViewerThumb:target div.controls, div.facsViewerThumb.fvSelected div.controls{
   z-index: 2000;
