@@ -69,7 +69,7 @@ div.facsViewerThumb div.closer{
   justify-content: space-between;
   background-color: lightgray;
   color: black;
-  border: solid 1pt gray;
+  border: solid 1pt #e0e0e0;
   width: calc(100% - 0.5em);
   height: 4vh;
   padding: 0.25em;
@@ -86,9 +86,13 @@ a.arrow, a.arrow:hover{
 
 div.closer a:not(.arrow), div.closer a:not(.arrow):hover, div.closer a:not(.arrow):visited{
   text-decoration: none;
-  color: black;
+  font-size: 2rem;
+  color: #a60000;
+  background-color: #e0e0e0;
   padding-right: 0.5em;
   padding-left: 0.5em;
+  margin: -0.25em;
+  border: solid 1pt black;
   cursor: pointer;
 }
 
