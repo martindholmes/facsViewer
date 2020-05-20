@@ -677,7 +677,7 @@ class FacsViewer{
         if (prevEl !== null){
           prevEl.classList.remove('fvSelected');
           //Now reset the image size and rotation.
-          this.resetImage(imgId);
+          this.resetImage(this.currItem);
         }
       }
       //Also unhighlight any old closed item.
