@@ -369,7 +369,7 @@ class FacsViewer{
       tp.innerHTML = `<div id="str_imgId" class="facsViewerThumb">
         <div class="closer">
           <span>str_imgFilename</span>
-          <a href="str_link">${this.linkText}</a>
+          <a href="str_link" target="_blank">${this.linkText}</a>
           <a href="#">x</a>
         </div>
         <div>
