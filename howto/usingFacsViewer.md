@@ -106,11 +106,29 @@ It may be useful for some or all of your images to be accompanied by links to ex
     ]
 }    
 ```  
-Secondly, you need to provide a string which will be used to make the link text for the image:
+Secondly, you need to provide a string which will be used to make the link text for the image. You can supply a single string for this when configuring the FacsViewer object:
 
 ```
 facsViewer = new FacsViewer({linkText: 'Transcription'});
 ```
+
+or you can provide a unique string for each link by including a linkTitle property in the JSON:
+
+```
+{ "folder" : "https:\/\/www.example.org\/images",
+    "images" : 
+    [ 
+      { "img" : "img1.jpg",
+        "link": "doc.html#page1",
+        "linkTitle": "Page one" },
+      
+      { "img" : "img2.jpg",
+        "link": "doc.html#page2",
+        "linkTitle": "Page two" }
+    ]
+}    
+```
+
 ### 3.3 Providing options for image sizes
 
 Large collections of large images can take a long time to render on the page, so if you have thumbnail versions of them, the responsiveness of the page can be improved. Rather than providing the path to a thumbnail for each image in a collection, it makes more sense to provide a single JavaScript function whose job is to convert the original image URL to its thumbnail equivalent (this of course requires that your files are named and organized in a methodical way). Here is an example:
