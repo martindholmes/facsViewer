@@ -396,7 +396,7 @@ class FacsViewer{
       let tp = document.createElement('template');
       tp.setAttribute('id', 'imgTemplate');
       tp.innerHTML = `<div id="str_imgId" class="facsViewerThumb">
-        <div class="closer">
+        <div class="facsTopBar">
           <span>str_imgFilename</span>
           <a data-title="link" target="_blank" href="str_link">${this.linkText}</a>
           <a data-title="close">x</a>
