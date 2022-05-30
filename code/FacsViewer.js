@@ -465,7 +465,7 @@ class FacsViewer{
 
     div.setAttribute('id', id);
 
-    div.querySelector('div.closer>span').innerHTML = fName;
+    div.querySelector('div.facsTopBar>span').innerHTML = fName;
 
     let lnk = div.querySelector('div.closer>a[data-title="link"]');
 
