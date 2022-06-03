@@ -62,14 +62,14 @@ div.facsViewerThumb>div>div{
 }
 
 /* Close X is in the top right. */
-div.facsViewerThumb div.closer{
+div.facsViewerThumb div.facsTopBar{
   display: none;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   background-color: lightgray;
   color: black;
-  border: solid 1pt gray;
+  border: solid 1pt #e0e0e0;
   width: calc(100% - 0.5em);
   height: 4vh;
   padding: 0.25em;
@@ -84,7 +84,7 @@ a.arrow, a.arrow:hover{
   cursor: pointer;
 }
 
-div.closer a:not(.arrow), div.closer a:not(.arrow):hover, div.closer a:not(.arrow):visited{
+div.facsTopBar a:not(.arrow), div.facsTopBar a:not(.arrow):hover, div.facsTopBar a:not(.arrow):visited{
   text-decoration: none;
   color: black;
   padding-right: 0.5em;
@@ -98,7 +98,7 @@ div.facsViewerThumb img{
 }
 
 /* Now to show things... */
-div.facsViewerThumb:target{
+div.facsViewerThumb:target, div.facsViewerThumb.fvSelected{
   height: 96vh;
   width: 96vw;
   position: absolute;
@@ -107,7 +107,7 @@ div.facsViewerThumb:target{
   z-index: 1000;
 }
 
-div.facsViewerThumb:target div.imgContainer{
+div.facsViewerThumb:target div.imgContainer, div.facsViewerThumb.fvSelected div.imgContainer{
   min-height: 90vh;
 }
 
@@ -119,11 +119,11 @@ div.facsViewerThumb:target > div > div{
   padding: 0.5rem;
 }
 
-div.facsViewerThumb:target div.controls{
+div.facsViewerThumb:target div.facsTopBar, div.facsViewerThumb.fvSelected div.facsTopBar{
   z-index: 2000;
 }
 
-div.facsViewerThumb:target div.closer{
+div.facsViewerThumb:target div.facsTopBar, div.facsViewerThumb.fvSelected div.facsTopBar{
   display: flex;
 }
 
@@ -135,7 +135,7 @@ div.facsViewerThumb div.imgContainer{
   flex-grow: 3;
 }
 
-div.facsViewerThumb:target img{
+div.facsViewerThumb:target img, div.facsViewerThumb.fvSelected img{
   width: auto;
   max-width: 90vw;
   max-height: 90vh;
@@ -145,8 +145,13 @@ div.facsViewerThumb:target img{
   transition-duration: 0.2s;
 }
 
-div.facsViewerThumb:target a.arrow{
+div.facsViewerThumb:target a.arrow, div.facsViewerThumb.fvSelected a.arrow{
   display: block;
+}
+
+/* When an image item was the last selected but is unselected (closed). */
+div.facsViewerThumb.fvDeselected{
+  border: double 5pt red;
 }
 
 div#facsViewerProgressDiv{

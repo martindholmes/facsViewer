@@ -85,6 +85,10 @@
     *                           along with a few images before and after it (the 
     *                           number of those images is controlled by the 
     *                           targetCircleRadius property).
+    * @property {string} currItem The id of whichever item is currently selected
+    *                           (displayed at full size). Initially an empty string.
+    * @property {string} closedItem The id of the item which was previously selected,
+    *                           and was then closed. Initially an empty string.
     * @property {function} funcFolderToThumbnail A function that can be used to 
     *                           transform the path to a folder containing a regular 
     *                           sized image into one which contains an equivalent 
@@ -177,9 +181,19 @@
   
         //Get the target id if there's a hash in the URL.
         this.initialTargId = document.location.hash.substring(1) || '';
+
+        //Track the id of the item which is currently selected.
+        this.currItem = '';
+
+        //Track the id of the item which was last selected.
+        this.closedItem = '';
   
         //Parse out the URLSearchParams
         this.searchParams = new URLSearchParams(decodeURI(document.location.search));
+
+        //This allows the user to navigate through selected images using the back and
+        //forward buttons.
+        window.onpopstate = function(){this.popState()}.bind(this);
   
         //Folder URL to get stuff from. There are three ways to set this:
         //through a URL parameter, through an options parameter, or through
@@ -229,14 +243,15 @@
     * @param {string} folder The URL of the folder.
     */
     setFolder(folder){
-      window.location.hash = '';
+      //window.location.hash = '';
       //Make sure there's a final slash.
       let newFolder = folder.replace(/\/$/, '') + '/';
       this.folder = newFolder;
       this.getListing();
       //Check for a target image in the URL params.
       if (this.searchParams.get('image')){
-        window.location.hash = '#' + this.searchParams.get('image');
+        //window.location.hash = '#' + this.searchParams.get('image');
+        this.setSelected(this.searchParams.get('image'), false);
       }
     }
     /**
@@ -375,18 +390,17 @@
         let tp = document.createElement('template');
         tp.setAttribute('id', 'imgTemplate');
         tp.innerHTML = `<div id="str_imgId" class="facsViewerThumb">
-          <div class="closer">
+          <div class="facsTopBar">
             <span>str_imgFilename</span>
-            <a href="str_link" target="_blank">${this.linkText}</a>
-            <a href="#">x</a>
+            <a data-title="link" target="_blank" href="str_link">${this.linkText}</a>
+            <a data-title="close">x</a>
           </div>
           <div>
             <div class="controls">
-              <a class="arrow" title="Previous image"
-                href="str_prevImgId">←</a>
+              <a data-title="prev" class="arrow" title="Previous image">←</a>
             </div>
             <div class="imgContainer" id="facsImg_str_imgNum">
-              <a href="str_imgId">
+              <a data-title="me">
                 <picture>
                   <source media="(min-width: 7em)" 
                           srcset="str_img">
@@ -400,8 +414,7 @@
               <a class="arrow" data-id="view"
                 title="View this image in a separate window.">↗</a>
               <a class="arrow" data-id="rotate" title="Rotate">↻</a>
-              <a class="arrow" title="Next image"
-                href="str_nextImgId">→</a>
+              <a data-title="next" class="arrow" title="Next image">→</a>
               <a class="arrow" data-id="enlarge" title="Enlarge">+</a>
               <a class="arrow" data-id="shrink" title="Shrink">-</a>
             </div>
@@ -429,6 +442,9 @@
       }
       //Just to be sure
       this.addImageTemplate();
+
+      //We need to pass this object as "this" in event listeners.
+      let self = this;
   
       //Figure out some strings we need.
       let fName    = this.images[i].name;
@@ -443,9 +459,9 @@
   
       div.setAttribute('id', id);
   
-      div.querySelector('div.closer>span').innerHTML = fName;
+      div.querySelector('div.facsTopBar>span').innerHTML = fName;
   
-      let lnk = div.querySelector('div.closer>a');
+      let lnk = div.querySelector('div.facsTopBar>a[data-title="link"]');
   
       //If there's a link for the image, otherwise remove the element.
       if (Object.prototype.hasOwnProperty.call(this.images[i], 'link')){
@@ -458,18 +474,19 @@
         lnk.parentNode.removeChild(lnk);
       }
   
-      //Set some ids and hrefs.
-      div.querySelector('a[href="str_prevImgId"]').setAttribute('href', '#' + lastId);
+      //Set some ids and click events.
+      div.querySelector('a[data-title="close"]').addEventListener('click', function(){this.setDeselected(id);}.bind(self));
+      div.querySelector('a[data-title="prev"]').addEventListener('click', function(){this.setSelected(lastId, false);}.bind(self));
       div.querySelector('div.imgContainer').setAttribute('id', 'facsImg_' + i.toString());
-      div.querySelector('a[href="str_nextImgId"]').setAttribute('href', '#' + nextId);
-      div.querySelector('a[href="str_imgId"]').setAttribute('href', '#' + id);
+      div.querySelector('a[data-title="next"]').addEventListener('click', function(){this.setSelected(nextId, false);}.bind(self));
+      div.querySelector('a[data-title="me"]').addEventListener('click', function(){this.setSelected(id, false);}.bind(self));
   
       //Now handle the actual image. Whether there's a thumbnail or not, we'll
       //provide a regular img tag.
       let img = div.querySelector('img[src="str_img"]');
       img.setAttribute('src', this.images[i].img);
       img.setAttribute('title', fName);
-      img.addEventListener('load', function(){this.imageLoaded()}.bind(this));
+      img.addEventListener('load', function(){this.imageLoaded()}.bind(self));
   
       //Now we fork based on whether a function has been provided to generate 
       //a thumbnail URL. If not, delete the source elements.
@@ -489,19 +506,19 @@
       //If we have a function giving us a path to the large image, use it.
       if (this.funcFolderToLarge == null){
         div.querySelector('a[data-id="view"]').addEventListener('click', 
-                        function(){window.open(this.images[i].img)}.bind(this));
+                        function(){window.open(this.images[i].img)}.bind(self));
       }
       else{
         let large = this.funcFolderToLarge(this.images[i].img);
         div.querySelector('a[data-id="view"]').addEventListener('click', 
-                        function(){window.open(large)}.bind(this));
+                        function(){window.open(large)});
       }
       div.querySelector('a[data-id="rotate"]').addEventListener('click', 
-                        function(){this.rotateImage(`facsImg_${i}`);}.bind(this));
+                        function(){this.rotateImage(`facsImg_${i}`);}.bind(self));
       div.querySelector('a[data-id="enlarge"]').addEventListener('click', 
-                        function(){this.scaleImage(`facsImg_${i}`, true);}.bind(this));
+                        function(){this.scaleImage(`facsImg_${i}`, true);}.bind(self));
       div.querySelector('a[data-id="shrink"]').addEventListener('click', 
-                        function(){this.scaleImage(`facsImg_${i}`, false);}.bind(this));
+                        function(){this.scaleImage(`facsImg_${i}`, false);}.bind(self));
   
       //Return what we built.
       return div;
@@ -607,8 +624,9 @@
         }
   
         //Now reset the location hash to highlight the target image.
-        document.location.hash = '';
-        document.location.hash = '#' + targId;
+        //document.location.hash = '';
+        //document.location.hash = '#' + targId;
+        this.setSelected(targId, false);
         //setTimeout(function(){document.location.hash = '#' + targId;}, 200);
   
         //Now render the next block of images: endWith to the end.
@@ -641,6 +659,97 @@
       });
     }
   
+  /**
+   * @function FacsViewer~setSelected
+   * @description The function which runs to select an item for 
+   * large-size display. Also deselects any previous item. The 
+   * main action is setting classes on the items.
+   * @param {string} imgId The id of the item to be selected. 
+   * @param {boolean} popping When this function is called as a
+   *                      result of a History pop event, we don't
+   *                      need to push anything to the History.
+   */
+   setSelected(imgId, popping = false){
+    //First confirm the thing exists.
+    let el = this.displayEl.querySelector(`div[id="${imgId}"]`);
+    if (el !== null){
+      //Now deselect any prior item.
+      if (this.currItem != ''){
+        let prevEl = this.displayEl.querySelector(`div[id="${this.currItem}"]`);
+        if (prevEl !== null){
+          prevEl.classList.remove('fvSelected');
+          //Now reset the image size and rotation.
+          this.resetImage(this.currItem);
+        }
+      }
+      //Also unhighlight any old closed item.
+      if (this.closedItem !== ''){
+        let closedEl = this.displayEl.querySelector(`div[id="${this.closedItem}"]`);
+        if (closedEl !== null){
+          closedEl.classList.remove('fvDeselected');
+        }
+        this.closedItem = '';
+      }
+      //Set the location hash for the History object, if we're not 
+      //doing this operation as a result of a history pop.
+      if (popping === false){
+        let url = window.location.href.split(/#/)[0] + '#' + imgId;
+        if (window.location.href !== url){
+          history.pushState({time: Date.now()}, '', url);
+        }
+      }
+
+      //Finally, display our item.
+      el.classList.add('fvSelected');
+      this.currItem = imgId;
+      el.scrollIntoView({});
+    }
+  }
+
+  /**
+   * @function FacsViewer~setDeselected
+   * @description The function which runs to "close" an item from 
+   * large-size display. This is run when not transitioning to 
+   * a new selected item, just closing the current one.
+   * @param {string} imgId The id of the item to be Deselected. 
+   */
+  setDeselected(imgId){
+    //First confirm the thing exists.
+    let el = this.displayEl.querySelector(`div[id="${imgId}"]`);
+    if (el !== null){
+      //Unhighlight any old closed item.
+      if (this.closedItem !== ''){
+        let closedEl = this.displayEl.querySelector(`div[id="${this.closedItem}"]`);
+        if (closedEl !== null){
+          closedEl.classList.remove('fvDeselected');
+        }
+        this.closedItem = '';
+      }
+
+      //Now reset the image size and rotation.
+      this.resetImage(imgId);
+
+      //Finally, deselect our item and make it the last closed item.
+      el.classList.remove('fvSelected');
+      el.classList.add('fvDeselected');
+      window.location.hash = '';
+      window.setTimeout(function(){el.scrollIntoView()}, 50);
+      this.closedItem = imgId;
+    }
+  }
+  /**
+   * @function FacsViewer~popState
+   * @description Function called by the window onpopstate event. If 
+   *           the target hash in the new URL is not the same as the
+   *           current item, make it the selected item.
+   */
+  popState(){
+    let imgId = window.location.hash.substring(1);
+    if (imgId !== this.currItem){
+      this.setSelected(imgId, true);
+    } 
+  }
+
     /**
     * @function FacsViewer~getImageIndexById
     * @description Function to retrieve the index of a specific
@@ -678,7 +787,7 @@
           img.style.transform = tf.replace(/^(.*)rotate\((\d+)deg\)(.*)$/, '$1rotate(' + newRot + 'deg)$3');
         }
         else{
-          img.style.transform = tf + ' rotate(' + newRot + 'deg)';
+          img.style.transform = tf.replace('none', '') + ' rotate(' + newRot + 'deg)';
         }
         setTimeout(function(){this.repositionImage(divId);}.bind(this), 1);
       }
@@ -705,7 +814,7 @@
           div.style.transform = tf.replace(/^(.*)scale\(([\d.]+)\)(.*)$/, '$1scale(' + newScale + ')$3');
         }
         else{
-          div.style.transform = tf + ' scale(' + newScale + ')';
+          div.style.transform = tf.replace('none', '') + ' scale(' + newScale + ')';
         }
         setTimeout(function(){this.repositionImage(divId);}.bind(this), 1);
       }
